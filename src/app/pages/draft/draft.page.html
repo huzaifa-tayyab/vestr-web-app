@@ -1,0 +1,145 @@
+<ion-content>
+  <ion-grid>
+    <!-- <ion-row>
+      <ion-col
+        size="3"
+        *ngFor="let item of count; let i=index;let even=even;let odd=odd;let last=last"
+        [ngStyle]="even && {'borderBottom': i == (count.length-2) ? '' : '1px solid grey','borderRight': even ? '1px solid grey': ''} || odd && {'borderBottom': last ? '' : '1px solid grey','borderRight': even ? '1px solid grey': ''} "
+        >fssf</ion-col
+      >
+    </ion-row> -->
+    <ion-row>
+      <ion-col
+        size="12"
+        style="
+          border: 0.1px solid #b3b3b3;
+          border-top: none;
+          border-top: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+          padding: 15px;
+        "
+      >
+        <ion-text
+          class="newshead"
+          style="
+            font-family: 'SF Pro Display';
+            font-style: normal;
+            font-weight: 600;
+            font-size: 21px;
+            line-height: 28px;
+            align-items: center;
+            letter-spacing: -0.001em;
+            display: inline-block;
+            margin-top: 10px;
+          "
+        >
+          Draft
+        </ion-text>
+      </ion-col>
+      <!-- <ion-col
+        size="12"
+        style="
+          display: flex;
+          align-items: center;
+          border: 0.1px solid #b3b3b3;
+          border-top: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+        "
+      >
+        <ion-label style="display: inline-block; padding: 10px">
+          <span
+            style="
+              font-family: 'SF Pro Display';
+              font-style: normal;
+              font-weight: 400;
+              font-size: 14px;
+              line-height: 19px;
+              /* identical to box height */
+
+              letter-spacing: -0.001em;
+              margin-left: 10px;
+            "
+          >
+            Showing
+            <span style="font-weight: bold">all posts from</span>
+          </span>
+          <ion-button
+            (click)="setItem()"
+            style="margin-top: -5px; margin-left: -8px; margin-right: -14px"
+            color="success"
+            fill="clear"
+            >{{post_date_name}}</ion-button
+          >
+          <ion-select
+            [(ngModel)]="post_date_filter"
+            mode="ios"
+            #mySelect
+            hidden
+            (ionChange)="getFeedData($event)"
+          >
+            <ion-select-option value="today">today</ion-select-option>
+            <ion-select-option value="1_month">1 month</ion-select-option>
+            <ion-select-option value="1_year">all time</ion-select-option>
+          </ion-select>
+          <span> , sorted by</span>
+          <ion-button
+            (click)="setItem2()"
+            style="margin-top: -5px; margin-left: -5px"
+            color="success"
+            fill="clear"
+            >{{replaceString(sort_by)}}</ion-button
+          >
+          <ion-select
+            [(ngModel)]="sort_by"
+            mode="ios"
+            #mySelect2
+            hidden
+            (ionChange)="getFeedData2($event)"
+          >
+            <ion-select-option value="most_recent"
+              >most recent</ion-select-option
+            >
+            <ion-select-option value="most_popular"
+              >most popular</ion-select-option
+            >
+            <ion-select-option value="most_comments"
+              >most comments</ion-select-option
+            >
+          </ion-select>
+        </ion-label>
+      </ion-col> -->
+    </ion-row>
+    <ion-row>
+      <ion-col
+        *ngIf="items.length==0"
+        size="12"
+        style="
+          border: 0.1px solid lightgray;
+          border-top: none;
+          border-bottom: none;
+          height: 100vh;
+        "
+      >
+        <p class="s" style="margin-left: 10px">No posts found</p>
+      </ion-col>
+      <ion-col
+        size="12"
+        *ngFor="let item of items; let i=index"
+        style="border: 0.1px solid lightgray; border-top: none"
+      >
+        <app-draft-feed
+          [item]="item"
+          [index]="i"
+          [readmore]="true"
+          [profile_image_path]="profile_image_path"
+          [vestLogin]="vestLogin"
+          [file_path]="file_path"
+          [postDetailsData]="postDetailsData"
+          (removeItem)="removeItem($event)"
+          (postDetails)="postDetails($event)"
+          (setVote)="setVote($event)"
+        ></app-draft-feed>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

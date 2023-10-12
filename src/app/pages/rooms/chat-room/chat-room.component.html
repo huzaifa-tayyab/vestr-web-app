@@ -1,0 +1,257 @@
+<ion-content [ngStyle]="{ height: '88vh' }">
+  <ion-col size="12" *ngIf="is_joined == 1">
+    <ion-item fill="outline" style="--background: transparent">
+      <ion-label class="newshead" position="floating"
+        >Write a comment...</ion-label
+      >
+      <ion-textarea
+        class="newshead"
+        [(ngModel)]="htmlContent"
+        placeholder="Write a comment..."
+      ></ion-textarea>
+      <ion-button
+        (click)="onsubmit()"
+        [disabled]="isFileUpload"
+        fill="solid"
+        color="success"
+        shape="round"
+        style="
+          z-index: 10;
+          width: 95px;
+          height: 32px;
+          position: absolute;
+          bottom: -20px;
+          right: -2px;
+        "
+      >
+        Send
+      </ion-button>
+    </ion-item>
+  </ion-col>
+  <ion-col size="12" style="padding-top: 15px">
+    <label class="s-lbl" style="margin-left: 10px">
+      <i class="fa-solid fa-chevron-down"></i>
+      <select
+        (change)="getFeedData($event)"
+        [(ngModel)]="filter_date"
+        class="mainfeeddropdown"
+        style="
+          border-radius: 20px;
+          border: 1px solid #d3d3d3;
+          font-size: 16px;
+          padding: 5px 35px;
+          margin-top: 5px;
+          background: transparent;
+          font-family: SF-Pro-Display-Medium;
+        "
+      >
+        <option value="today">Today</option>
+        <option value="1_month">1 Month</option>
+        <option value="all_time">All time</option>
+      </select>
+    </label>
+
+    <label class="s-lbl">
+      <i class="fa-solid fa-chevron-down"></i>
+      <select
+        (change)="getFeedData($event)"
+        [(ngModel)]="sort_by"
+        class="mainfeeddropdown"
+        style="
+          border-radius: 20px;
+          border: 1px solid #d3d3d3;
+          font-size: 16px;
+          padding: 5px 35px;
+          margin-top: 5px;
+          background: transparent;
+          font-family: SF-Pro-Display-Medium;
+        "
+      >
+        <option value="recent">Most recent</option>
+        <option value="most_popular">Most popular</option>
+        <option value="most_comments">Most comments</option>
+      </select>
+    </label>
+
+    <br />
+    <ion-list style="background: transparent; margin-left: -4px" lines="none">
+      <ion-item
+        class="newshead"
+        style="
+          --background: transparent;
+          margin-bottom: 23px;
+          padding: 0;
+          border: 0.1px solid #b3b3b3;
+          border-left: none;
+          border-top: none;
+          border-right: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+        "
+        *ngFor="let item of roomDetails; let i = index"
+      >
+        <ion-avatar
+          slot="start"
+          style="position: absolute; top: 0; left: 10px"
+          routerLink="/app/profile/{{ item?.user.user_uid }}"
+        >
+          <img
+            style="position: absolute; width: 50px"
+            alt="Silhouette of mountains{{ i }}"
+            *ngIf="item.user.profile_image"
+            src="{{ profile_image_path }}{{ item.user.profile_image }}"
+          />
+          <img
+            style="position: absolute; width: 50px"
+            alt="Silhouette of mountains{{ i }}"
+            *ngIf="!item.user.profile_image"
+            src="assets/icon/dark.png"
+          />
+        </ion-avatar>
+        <ion-label style="margin-left: 55px" class="ion-text-wrap">
+          <span
+            routerLink="/app/profile/{{ item?.user.user_uid }}"
+            style="
+              cursor: pointer;
+
+              font-style: normal;
+              font-weight: 600;
+              font-size: 16px;
+              line-height: 22px;
+              /* or 138% */
+
+              letter-spacing: -0.001em;
+              --color: none !important;
+            "
+          >
+            &nbsp;{{ item.user.fname }} {{ item.user.lname }} @{{
+              item.user.username
+            }}
+            .
+            {{ getNowDate(item.modified_date) | timeAgo }}
+          </span>
+
+          <span style="float: right; margin-left: 5px; text-align: center">
+            <ion-icon
+              name="arrow-up"
+              style="cursor: pointer; color: lightgray"
+              (click)="setVote(item.rp_uid, 'up', item, i)"
+            ></ion-icon
+            ><br />
+            <span style="cursor: pointer; color: lightgray">{{
+              item.total_down_vote + item.total_up_vote
+            }}</span>
+            <br /><ion-icon
+              name="arrow-down"
+              (click)="setVote(item.rp_uid, 'down', item, i)"
+              style="cursor: pointer; color: lightgray"
+            ></ion-icon>
+          </span>
+          <ion-button
+            *ngIf="this.vestLogin?.user_uid == item.user.user_uid"
+            style="float: right"
+            (click)="presentAlert(item.rp_uid, i)"
+            expand="block"
+            fill="clear"
+            shape="round"
+            color="danger"
+          >
+            <ion-icon name="trash-outline"></ion-icon>
+          </ion-button>
+
+          <br />
+          <span
+            style="
+              margin-left: 3px;
+              display: block;
+              --color: none;
+
+              font-style: normal;
+              font-weight: 500;
+              font-size: 16px;
+              line-height: 22px;
+              /* or 138% */
+
+              letter-spacing: -0.001em;
+            "
+            [innerHTML]="item.text"
+          >
+          </span>
+          <br />
+          <div *ngIf="item.type == 'image'" style="text-align: center">
+            <img
+              style="height: 240px"
+              src="{{ room_post_path }}{{ item.filename }}"
+              alt="file"
+            />
+          </div>
+          <div *ngIf="item.type == 'video'" style="text-align: center">
+            <video
+              src="{{ room_post_path }}{{ item.filename }}"
+              width="300"
+              height="200"
+              controls
+            ></video>
+          </div>
+          <div *ngIf="item.type == 'audio'" style="text-align: center">
+            <video
+              src="{{ room_post_path }}{{ item.filename }}"
+              width="300"
+              height="60"
+              controls
+            ></video>
+          </div>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-col>
+
+  <!-- <ion-fab
+    horizontal="center"
+    *ngIf="is_joined == 1"
+    style="position: sticky; bottom: 0; text-align: -webkit-center"
+  >
+    <ion-fab-button color="success" (click)="setOpen1(true)">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab> -->
+</ion-content>
+<!-- <ion-modal [isOpen]="isModalOpen" (willDismiss)="cancel()">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar style="--background: transparent">
+        <ion-buttons slot="start">
+          <ion-button color="danger" (click)="cancel()">X</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <angular-editor
+        [(ngModel)]="htmlContent"
+        [config]="config"
+      ></angular-editor>
+    </ion-content>
+    <ion-footer style="z-index: -1">
+      <ion-toolbar style="--background: transparent">
+        <ion-buttons slot="end">
+          <ion-button color="success"
+            >Attach
+            <input type="file" id="myFileInput" (change)="uploadFile($event)" />
+          </ion-button>
+        </ion-buttons>
+        <ion-buttons slot="end">
+          <ion-button></ion-button>
+        </ion-buttons>
+        <ion-buttons slot="end" style="margin-right: 15px">
+          <ion-button
+            (click)="onsubmit()"
+            [disabled]="isFileUpload"
+            fill="solid"
+            color="success"
+            shape="round"
+            >Post</ion-button
+          >
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-footer>
+  </ng-template>
+</ion-modal> -->

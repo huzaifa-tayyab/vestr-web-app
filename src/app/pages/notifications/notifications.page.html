@@ -1,0 +1,79 @@
+<ion-content>
+  <ion-grid fixed>
+    <ion-row>
+      <ion-col
+        size="12"
+        style="
+          border: 0.1px solid #b3b3b3;
+          border-top: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+          padding: 15px;
+        "
+      >
+        <ion-text
+          class="newshead"
+          style="
+            font-size: 22px;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 10px;
+          "
+        >
+          Notifications
+        </ion-text>
+      </ion-col>
+      <ion-col
+        size="12"
+        style="
+          border: 0.1px solid #b3b3b3;
+          border-top: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+        "
+      >
+        <ion-segment [value]="segmentValue" [scrollable]="true" color="success">
+          <ion-segment-button
+            *ngFor="let item of items"
+            [value]="item.value"
+            (click)="segmentValue=item.value"
+          >
+            <ion-label
+              class="newshead"
+              style="
+                text-transform: none;
+                display: inline-block;
+                font-family: 'SF Pro Display';
+                font-style: normal;
+                font-weight: 600;
+                font-size: 16px;
+                line-height: 19px;
+                /* identical to box height */
+
+                text-align: center;
+                letter-spacing: -0.001em;
+              "
+              >{{item.name}}</ion-label
+            >
+          </ion-segment-button>
+        </ion-segment>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col
+        size="12"
+        style="
+          border: 0.1px solid #b3b3b3;
+          border-top: none;
+          border-bottom: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+        "
+      >
+        <div *ngFor="let item of items">
+          <app-all
+            *ngIf="item.value==segmentValue"
+            [segmentValue]="segmentValue"
+          ></app-all>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

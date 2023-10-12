@@ -1,0 +1,31 @@
+.userlist {
+  color: #1dcf5b;
+}
+.userlist:hover {
+  text-decoration: underline;
+}
+.owner:hover {
+  text-decoration: underline;
+}
+ion-button {
+  text-transform: none;
+}
+
+.out-bnt {
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #000;
+  border-radius: 100px;
+  padding: 7px 30px;
+  font-size: 16px;
+  margin: 10px;
+}
+
+.active-btn {
+  color: #fff !important;
+  background-color: #1dcf5b !important;
+}
+
+.main-button {
+  --box-shadow: none;
+}

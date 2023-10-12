@@ -1,0 +1,135 @@
+<ion-row>
+  <ion-col size="12">
+    <p class="h" style="margin-left: 10px; margin-bottom: 0">{{ title }}</p>
+  </ion-col>
+  <ion-col size="12">
+    <ngx-datatable
+      #table
+      class="bootstrap"
+      [columnMode]="ColumnMode.force"
+      [headerHeight]="50"
+      [footerHeight]="50"
+      [rowHeight]="'auto'"
+      [limit]="10"
+      [scrollbarH]="true"
+      [scrollbarH]="true"
+      [rows]="rows"
+      [columns]="columns"
+    >
+      <ngx-datatable-column
+        *ngFor="let item of columns; let i = index"
+        [sortable]="true"
+        [width]="item.width"
+        class="bootstrap"
+        [name]="item.name"
+        [prop]="item.prop"
+      >
+        <ng-template
+          let-row="row"
+          let-value="value"
+          let-rowIndex="rowIndex"
+          ngx-datatable-cell-template
+        >
+          <!-- For Image Start -->
+          <ion-avatar
+            *ngIf="item.type == 'image'"
+            slot="start"
+            style="width: 42px; height: 42px; margin-top: 10px"
+          >
+            <img
+              loading="lazy"
+              style="height: 42px; width: 42px"
+              src="assets/icon/dark.png"
+              alt="logo"
+            />
+          </ion-avatar>
+          <!-- For Image End -->
+
+          <!-- For Text Start -->
+          <p
+            *ngIf="value && item.type == 'text'"
+            [class]="item.class"
+            style="cursor: pointer"
+            (click)="goToMarketPage(row)"
+          >
+            {{ value.length > 7 ? (value | slice : 0 : 7) + "..." : value }}
+          </p>
+          <!-- For Text End -->
+
+          <!-- For Currency Start -->
+          <p *ngIf="value && item.type == 'currency'" [class]="item.class">
+            {{ value | currency }}
+          </p>
+          <!-- For Currency End -->
+          <p
+            [class]="item.class"
+            *ngIf="item.type == 'function' && getPercentageStocks(row).key"
+            style="color: #1dcf5b"
+          >
+            {{ getPercentageStocks(row).value | number : "1.1-1" }}%
+          </p>
+          <p
+            [class]="item.class"
+            *ngIf="item.type == 'function' && !getPercentageStocks(row).key"
+            style="color: #fda57d"
+          >
+            {{ getPercentageStocks(row).value | number : "1.1-1" }}%
+          </p>
+          <!-- For M start -->
+          <p *ngIf="value && item.type == 'm'" [class]="item.class">
+            {{ value | number : "1.1-1" }}m
+          </p>
+          <p *ngIf="!value && item.type == 'm'" [class]="item.class">N/A</p>
+          <!-- For M End -->
+
+          <!-- For Function Start -->
+          <ion-icon
+            *ngIf="item.type == 'function2'"
+            (click)="removeItemList(row)"
+            style="
+              position: absolute;
+              top: 24px;
+              right: 48px;
+              font-size: 24px;
+              z-index: 9999;
+            "
+            color="danger"
+            name="trash-outline"
+          ></ion-icon>
+          <!-- For Function End -->
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-footer>
+        <ng-template
+          style="background: transparent"
+          ngx-datatable-footer-template
+          let-rowCount="rowCount"
+          let-pageSize="pageSize"
+          let-selectedCount="selectedCount"
+          let-curPage="curPage"
+          let-offset="offset"
+          let-isVisible="isVisible"
+          let-background="transparent"
+        >
+          <ion-label *ngIf="rows.length > 5"
+            ><p
+              style="
+                font-family: 'SF Pro Display';
+                font-style: normal;
+                font-weight: 600;
+                font-size: 17px;
+                line-height: 28px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                text-align: center;
+              "
+            >
+              Show more
+            </p></ion-label
+          >
+        </ng-template>
+      </ngx-datatable-footer>
+    </ngx-datatable>
+  </ion-col>
+</ion-row>

@@ -1,0 +1,364 @@
+<form [formGroup]="orderForm" style="padding: 10px">
+  <div
+    formArrayName="items"
+    *ngFor="
+      let item of orderFormControl.controls;
+      let i = index;
+      let last = last
+    "
+  >
+    <div [formGroupName]="i">
+      <ion-row>
+        <ion-col size="12" sizeSm="6" style="padding-right: 10px;">
+          <ion-label>Enter first name </ion-label>
+          <ion-item lines="none"
+            fill="outline"
+            style="margin-top: 10px; margin-bottom: 10px;"
+            class="btm-none"
+          >
+            <ion-input
+              placeholder="First name"
+              formControlName="fname"
+            ></ion-input>
+          </ion-item>
+          <ion-text
+            color="danger"
+            *ngIf="
+              isSubmitted &&
+              orderForm.get('items')['controls'][i].controls.fname.errors
+                ?.required
+            "
+          >
+            First Name is required.
+          </ion-text>
+        </ion-col>
+        <ion-col size="12" sizeSm="6" style="padding-right: 10px;">
+          <ion-label>Enter last name</ion-label>
+          <ion-item
+          lines="none"
+            fill="outline"
+            style="margin-top: 10px; margin-bottom: 10px"
+          >
+            <ion-input
+              placeholder="Last name"
+              formControlName="lname"
+            ></ion-input>
+          </ion-item>
+          <ion-text
+            color="danger"
+            *ngIf="
+              isSubmitted &&
+              orderForm.get('items')['controls'][i].controls.lname.errors
+                ?.required
+            "
+          >
+            Last Name is required.
+          </ion-text>
+        </ion-col>
+        <ion-col size="12" sizeSm="6" style="padding-right: 10px;">
+          <ion-label>Enter username</ion-label>
+          <ion-item
+          lines="none"
+            fill="outline"
+            style="margin-top: 10px; margin-bottom: 10px"
+          >
+            <ion-input
+              (keydown.space)="$event.preventDefault()"
+              placeholder="Username"
+              formControlName="username"
+            ></ion-input>
+          </ion-item>
+          <ion-text
+            color="danger"
+            *ngIf="
+              isSubmitted &&
+              orderForm.get('items')['controls'][i].controls.username.errors
+                ?.required
+            "
+          >
+            Username is required.
+          </ion-text>
+        </ion-col>
+        <ion-col size="12" sizeSm="6" style="padding-right: 10px;">
+          <ion-label>Email address</ion-label>
+          <ion-item
+          lines="none"
+            fill="outline"
+            style="margin-top: 10px; margin-bottom: 10px"
+          >
+            <ion-input
+              placeholder="Your email"
+              formControlName="email"
+            ></ion-input>
+          </ion-item>
+          <ion-text
+            color="danger"
+            *ngIf="
+              isSubmitted &&
+              orderForm.get('items')['controls'][i].controls.email.errors
+                ?.required
+            "
+          >
+            Email is required.
+          </ion-text>
+          <ion-text
+            color="danger"
+            *ngIf="
+              isSubmitted &&
+              orderForm.get('items')['controls'][i].controls.email.errors
+                ?.pattern
+            "
+          >
+            Valid Email is required.
+          </ion-text>
+        </ion-col>
+        <ion-col size="12" sizeSm="6" style="padding-right: 10px;">
+          <ion-label>Gender</ion-label><br />
+          <ion-radio-group formControlName="gender">
+            <ion-radio style="margin-top: 18px" value="male"></ion-radio> &nbsp;
+            <ion-label>Male</ion-label> &nbsp;
+            <ion-radio style="margin-top: 18px" value="female"></ion-radio>
+            &nbsp; <ion-label>Female</ion-label>
+          </ion-radio-group>
+        </ion-col>
+        <ion-col size="12" sizeSm="6" style="padding-right: 10px;">
+          <ion-label>Phone number</ion-label>
+          <ion-item
+          lines="none"
+            fill="outline"
+            style="margin-top: 10px; margin-bottom: 10px"
+          >
+            <ion-input
+              id="phone"
+              [readonly]="true"
+              maxlength="10"
+              (keypress)="numberOnlyValidation($event)"
+              placeholder="Your Phone"
+              type="text"
+              formControlName="phone"
+            ></ion-input>
+          </ion-item>
+          <ion-text
+            color="danger"
+            *ngIf="
+              isSubmitted &&
+              orderForm.get('items')['controls'][i].controls.phone.errors
+                ?.required
+            "
+          >
+            Phone is required.
+          </ion-text>
+          <ion-text
+            color="danger"
+            *ngIf="
+              isSubmitted &&
+              orderForm.get('items')['controls'][i].controls.phone.errors
+                ?.minlength
+            "
+          >
+            Phone should be only 10 numbers.
+          </ion-text>
+          <ion-text
+            color="danger"
+            *ngIf="
+              isSubmitted &&
+              orderForm.get('items')['controls'][i].controls.phone.errors
+                ?.maxlength
+            "
+          >
+            Phone should be only 10 numbers.
+          </ion-text>
+          <ion-text
+            color="danger"
+            *ngIf="
+              isSubmitted &&
+              orderForm.get('items')['controls'][i].controls.phone.errors
+                ?.pattern
+            "
+          >
+            Phone is required only numbers.
+          </ion-text>
+        </ion-col>
+        <ion-col size="12" sizeSm="6" style="padding-right: 10px;">
+          <ion-label>Enter date of birth</ion-label>
+          <ion-item
+          lines="none"
+            fill="outline"
+            mode="md"
+            style="margin-top: 10px; margin-bottom: 10px"
+          >
+            <ion-grid fixed style="width: 100%">
+              <ion-row style="height: 20px">
+                <ion-col style="top: -28px">
+                  <ion-input
+                    style="height: 75px"
+                    readonly="true"
+                    formControlName="dob"
+                    [value]="dateValue"
+                    name="dob"
+                    id="dob"
+                  ></ion-input>
+                </ion-col>
+                <ion-col style="top: -4px">
+                  <ion-button
+                    fill="clear"
+                    id="open-date-input-2"
+                    color="success"
+                    style="float: right"
+                  >
+                    <ion-icon icon="calendar"></ion-icon>
+                  </ion-button>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+            <ion-popover trigger="open-date-input-2" show-backdrop="false">
+              <ng-template>
+                <ion-datetime
+                  #popoverDatetime
+                  presentation="date"
+                  showDefaultButtons="true"
+                  (ionChange)="dateValue = formatDate(popoverDatetime.value)"
+                ></ion-datetime>
+              </ng-template>
+            </ion-popover>
+          </ion-item>
+          <ion-text
+            color="danger"
+            *ngIf="
+              isSubmitted &&
+              orderForm.get('items')['controls'][i].controls.dob.errors
+                ?.required
+            "
+          >
+            Date of birth is required.
+          </ion-text>
+        </ion-col>
+        <ion-col size="12" sizeSm="6" style="padding-right: 10px;">
+          <ion-label>Upload Cover Image</ion-label>
+          <ion-item
+          lines="none"
+            fill="outline"
+            style="margin-top: 10px; margin-bottom: 10px"
+          >
+          <label class="input-lbl">
+            Upload Cover Image
+              <input
+              class="file-input"
+                type="file"
+                id="myFileInput"
+                accept="image/*"
+                (change)="coverUploadFile($event)"
+              />
+            </label>
+           
+          </ion-item>
+        </ion-col>
+        <ion-col size="12" sizeSm="6" style="padding-right: 10px;">
+          <ion-label>Upload Profile Image</ion-label>
+          <ion-item
+          lines="none"
+            fill="outline"
+            style="margin-top: 10px; margin-bottom: 10px"
+          >
+          <label class="input-lbl">
+           Upload Profile Image
+              <input
+                class="file-input"
+                type="file"
+                id="myFileInput2"
+                accept="image/*"
+                (change)="fileChangeEvent($event)"
+              />
+            </label>
+          </ion-item>
+          <image-cropper
+            [imageChangedEvent]="imageChangedEvent"
+            [maintainAspectRatio]="true"
+            [aspectRatio]="4 / 3"
+            format="png"
+            (imageFile)="getBlob($event)"
+            (imageCropped)="imageCropped($event)"
+            (imageLoaded)="imageLoaded($event)"
+            (cropperReady)="cropperReady()"
+            (loadImageFailed)="loadImageFailed()"
+          ></image-cropper>
+
+          <img [src]="croppedImage" />
+        </ion-col>
+        <ion-col size="12">
+          <ion-label>Bio</ion-label>
+          <ion-item
+          lines="none"
+            fill="outline"
+            style="margin-top: 10px; margin-bottom: 10px"
+          >
+            <quill-editor
+              trackChanges="all"
+              formControlName="bio"
+              style="
+                height: 230px;
+                width: 100%;
+                display: flex;
+                flex-direction: column-reverse;
+              "
+              customToolbarPosition="bottom"
+            >
+              <div
+                quill-editor-toolbar
+                style="position: absolute; width: 100%; border: none"
+              >
+                <span class="ql-formats">
+                  <button class="ql-bold"></button>
+                  <button class="ql-italic"></button>
+                  <button class="ql-underline"></button>
+                </span>
+                <span class="ql-formats">
+                  <select class="ql-size" title="Size">
+                    <option value="huge">Headline</option>
+                    <option value="large">Body</option>
+                    <option value="small">Caption</option>
+                  </select>
+                </span>
+                <span class="ql-formats">
+                  <button class="ql-image" [title]="'Image'"></button>
+                </span>
+                <span class="ql-formats">
+                  <select class="ql-color"></select>
+                </span>
+                <span class="ql-formats">
+                  <button class="ql-list" value="ordered"></button>
+                </span>
+                <span class="ql-formats">
+                  <button class="ql-link"></button>
+                </span>
+              </div>
+            </quill-editor>
+          </ion-item>
+          <ion-text
+            color="danger"
+            *ngIf="
+              isSubmitted &&
+              orderForm.get('items')['controls'][i].controls.bio.errors
+                ?.required
+            "
+          >
+            Bio is required.
+          </ion-text>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12" style="margin-top: 5px">
+          <ion-button
+            size="large"
+            [disabled]="isFileUpload"
+            style="margin-top: 20px; --border-radius: 20px"
+            size="default"
+            color="success"
+            (click)="submit()"
+            >Update</ion-button
+          >
+        </ion-col>
+      </ion-row>
+    </div>
+  </div>
+</form>

@@ -1,0 +1,26 @@
+* {
+  margin-bottom: 0;
+  margin-bottom: 0;
+}
+ion-segment-button {
+  text-transform: none;
+}
+ion-segment {
+  grid-auto-columns: 1fr !important;
+}
+.mainfeeddropdown {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+.s-lbl {
+  position: relative;
+  padding-right: 10px;
+}
+
+.s-lbl .fa-chevron-down {
+  position: absolute;
+  width: 10px;
+  top: 14px;
+  right: 25px;
+  font-size: 13px;
+}

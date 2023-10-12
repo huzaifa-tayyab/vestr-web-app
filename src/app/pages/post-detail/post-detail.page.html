@@ -1,0 +1,50 @@
+<ion-content>
+  <ion-grid fixed>
+    <ion-row>
+      <ion-col
+        size="12"
+        style="
+          border: 0.1px solid #b3b3b3;
+          border-top: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+          padding: 15px;
+        "
+      >
+        <ion-item style="--background: transparent" lines="none">
+          <i
+            routerLink="/"
+            class="fas fa-arrow-left"
+            style="font-size: 20px; cursor: pointer"
+          ></i>
+          <ion-text class="ion-text-wrap">
+            <p class="s" *ngIf="items.length>0">
+              &nbsp; @{{items[0].user?.username }}'s Post
+            </p>
+          </ion-text>
+        </ion-item>
+      </ion-col>
+      <ion-col
+        size="12"
+        *ngFor="let item of items; let i=index"
+        style="
+          border: 0.1px solid #b3b3b3;
+          border-top: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+        "
+      >
+        <app-feed
+          [readmore]="false"
+          [item]="item"
+          [index]="i"
+          [profile_image_path]="profile_image_path"
+          [vestLogin]="vestLogin"
+          [file_path]="file_path"
+          [postDetailsData]="postDetailsData"
+          (postDetails)="postDetails($event)"
+          (removeItem)="removeItem($event)"
+          (setVote)="setVote($event)"
+        ></app-feed>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

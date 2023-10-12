@@ -1,0 +1,223 @@
+<ion-content [fullscreen]="true">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12 p-2 px-4 border-bottom">
+        <b class="title">Explore</b>
+      </div>
+    </div>
+    <div class="row px-2 mt-1">
+      <div class="col-6 pt-3 pb-2 px-3 mb-1">
+        <b class="title">Popular events today</b>
+      </div>
+      <div
+        class="col-12"
+        style="
+          padding-bottom: 25px;
+          border-bottom: 1px solid rgb(217, 217, 217);
+        "
+      >
+        <div *ngFor="let item of marketnew; let i=index">
+          <span
+            (click)="changeNews(i, item.event_id)"
+            style="cursor: pointer"
+            [ngClass]="{'outline-tabexplore': i==newsIndex, 'b-tabexplore': i!=newsIndex}"
+            >{{item.event_name}} </span
+          ><br />
+        </div>
+
+        <!-- <span
+          class="b-tab"
+          *ngFor="let item of marketnew; let i=index"
+          style="margin-bottom: 10px"
+          >{{item.title}}</span
+        > -->
+      </div>
+      <div class="col-12 pt-3" *ngIf="marketnew.length>0">
+        <p class="py-3" style="font-size: 18px">
+          {{marketnew[newsIndex].event_text}}
+        </p>
+      </div>
+    </div>
+
+    <div class="row px-4">
+      <div
+        class="col-12 px-0 pb-3 pt-3"
+        style="border-bottom: 1px solid #d3d3d3"
+        *ngFor="let item of detailsNews; let i=index"
+      >
+        <div (click)="openUrl(item.news_url)">
+          <div class="row">
+            <div class="col-md-9">
+              <div style="padding-right: 15px">
+                <span class="ex-heading"
+                  >{{item.source_name}} - {{ item.date | date: 'shortTime'
+                  }}</span
+                >
+                <b class="ex-headline">{{item.title}}</b>
+                <span class="tags" *ngIf="item?.tickers.length>0"
+                  >{{item?.tickers[0]}}</span
+                >
+                <span
+                  class="newshead"
+                  [ngStyle]="{'border': item.sentiment=='Positive' ? '1px solid #1dcf5b' : (item.sentiment=='Negative' ? '1px solid #d13f0f' : '1px solid'),'color': item.sentiment=='Positive' ? '#1dcf5b' : (item.sentiment=='Negative' ? '#d13f0f' : '') }"
+                  style="
+                    padding: 5px 15px !important;
+                    display: inline-block;
+                    border-radius: 5px;
+                  "
+                  >{{item.sentiment}}</span
+                >
+              </div>
+            </div>
+            <div class="col-md-3">
+              <img [src]="item?.image_url" width="190px" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- <div class="row">
+      <div class="col-12 pt-5 px-4">
+        <b class="title">Editor's pick</b>
+      </div>
+
+      <div
+        *ngFor="let item of editor_pick; let i=index"
+        class="col-12 px-4 pt-3 pb-3"
+        style="border-bottom: 1px solid #d3d3d3"
+      >
+        <div class="d-flex">
+          <div style="padding-right: 20px">
+            <p style="font-size: 18px">
+              <b class="u-name">Adam Yorke -</b> {{
+              getNowDate(item.modified_date) | timeAgo }} - News -
+              <b class="stock-name">$AAPL, $MSFT -</b>
+              <b class="g-text"> Positive</b>
+            </p>
+            <b class="ex-headline my-2">{{item.blog_title | titlecase}}</b>
+            <p class="discriptions">
+              {{ item.blog_content .length > 200 ? (item.blog_content | slice :
+              0 : 200) + "..." : item.blog_content }}
+            </p>
+          </div>
+          <div style="width: 290px">
+            <img src="{{blog_image_path}}{{item.blog_image}}" width="210px" />
+          </div>
+        </div>
+        <div>
+          <div>
+            <div class="row mt-4">
+              <div class="col-2 d-flex align-items-center">
+                <img src="assets/img/comments.svg" width="18px" /><span
+                  class="sm-font ms-3"
+                  >{{item.total_comments}}</span
+                >
+              </div>
+              <div class="col-2 d-flex align-items-center">
+                <img src="assets/img/likes.png" width="18px" /><span
+                  class="sm-font ms-3"
+                  >0</span
+                >
+              </div>
+              <div class="col-3" style="display: flex; align-items: center">
+                <i class="fa-solid fa-arrow-up"></i>
+
+                <span class="sm-font ms-3 me-3"
+                  >{{item.total_likes + item.total_dislikes}}</span
+                >
+
+                <i class="fa-solid fa-arrow-down"></i>
+              </div>
+              <div class="col-5 text-right">
+                <img src="assets/img/upload.png" width="16px" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> -->
+
+    <!-- <div class="row">
+      <div
+        *ngFor="let item of detailsNews; let i=index"
+        class="col-4 px-3 pt-3"
+        style="border-right: 1px solid rgb(217, 217, 217)"
+      >
+        <div
+          class="ex-card"
+          (click)="openUrl(item.news_url)"
+          style="cursor: pointer"
+        >
+          <img [src]="item?.image_url" width="100%" />
+          <b
+            class="title"
+            style="line-height: 30px; display: block; margin: 15px 0"
+            >{{item.title}}</b
+          >
+          <div style="margin-top: 5px">
+            <span
+              class="tickers"
+              style="
+                width: 86px;
+                height: 32px;
+
+                padding: 5px;
+                border-radius: 5px;
+              "
+              >{{item?.tickers[0]}} </span
+            >&nbsp;&nbsp;
+            <span
+              class="newshead"
+              [ngStyle]="{'border': item.sentiment=='Positive' ? '1px solid #1dcf5b' : (item.sentiment=='Negative' ? '1px solid #d13f0f' : '1px solid'),'color': item.sentiment=='Positive' ? '#1dcf5b' : (item.sentiment=='Negative' ? '#d13f0f' : '') }"
+              style="
+                width: 86px;
+                height: 32px;
+                padding: 5px;
+                border-radius: 5px;
+              "
+              >{{item.sentiment}}</span
+            >
+          </div>
+          <br />
+          <p style="color: rgb(164, 164, 164)">
+            {{ item.date | date: 'shortTime' }}
+          </p>
+        </div>
+      </div>
+    </div> -->
+  </div>
+
+  <!-- <div class="container-fluid">
+    <div class="row mt-4 px-3">
+      <div class="col-12 p-0">
+        <b class="title">Editors Pick</b>
+      </div>
+    </div>
+    <div class="row mt-3 mb-5">
+      <div
+        class="col-4 px-3"
+        style="border-right: 1px solid rgb(217, 217, 217)"
+        *ngFor="let item of editor_pick; let i=index"
+      >
+        <div class="ex-card">
+          <img src="{{blog_image_path}}{{item.blog_image}}" width="100%" />
+          <b
+            class="title"
+            style="line-height: 30px; display: block; margin: 15px 0"
+            >{{item.blog_title | titlecase}}</b
+          >
+
+          <p style="font-size: 18px">
+            {{ item.blog_content .length > 200 ? (item.blog_content | slice : 0
+            : 200) + "..." : item.blog_content }}
+          </p>
+
+          <p style="color: rgb(164, 164, 164)">
+            {{ getNowDate(item.modified_date) | timeAgo }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div> -->
+</ion-content>

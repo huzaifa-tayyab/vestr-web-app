@@ -1,0 +1,23 @@
+.chart-border {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+}
+
+
+.btn-img {
+  margin-top: -5pxpx;
+  margin-right: 10px;
+}
+.title-2 {
+  font-size: 15px;
+}
+.checkhover {
+  :hover {
+    color: #1dcf5b !important;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+}

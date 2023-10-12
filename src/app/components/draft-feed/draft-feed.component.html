@@ -1,0 +1,441 @@
+<div class="">
+  <!-- share start -->
+  <div class="row p-3 pb-1" *ngIf="item.action == 'shared'">
+    <div
+      class="col-md-1 text-center"
+      *ngIf="item.action == 'shared' && item.share_text"
+    >
+      <img
+        *ngIf="item.user?.profile_image"
+        src="{{ profile_image_path }}/{{ item.user?.profile_image }}"
+        width="50px"
+      />
+      <img
+        *ngIf="!item.user?.profile_image"
+        src="assets/icon/dark.png"
+        width="50px"
+      />
+    </div>
+    <div class="col-md-9 px-2">
+      <p class="name">
+        <b
+          >{{ item.user?.fname | titlecase }}
+          {{ item.user?.lname | titlecase }}</b
+        >&nbsp;
+        <span *ngIf="item.action == 'shared' && item.share_text"
+          >@{{ item.user?.username }}.
+          {{ getNowDate(item.modified_date) | timeAgo }}</span
+        >
+        <span *ngIf="item.action == 'shared' && !item.share_text"
+          >reposted
+          <fa-icon
+            [icon]="faRetweet"
+            style="font-size: 17px; color: #707070"
+          ></fa-icon
+        ></span>
+      </p>
+      <p class="para" *ngIf="item.share_text">{{ item.share_text }}</p>
+    </div>
+    <div class="col-md-2 px-2" *ngIf="vestLogin">
+      <img
+        src="assets/img/dot.png"
+        class="d-block ms-auto"
+        width="15px"
+        *ngIf="item.user?.user_uid == this.vestLogin.user_uid"
+        id="click-trigger{{ index }}"
+        (click)="
+          goDetailsPost(item.post_uid, item?.user.user_uid, 'setopen', $event)
+        "
+      />
+      <ion-popover
+        style="--width: 140px !important"
+        keep-contents-mounted="true"
+        #popover
+        [isOpen]="isOpen"
+        (didDismiss)="isOpen = false"
+        *ngIf="item.user?.user_uid == this.vestLogin.user_uid"
+      >
+        <ng-template>
+          <ion-content class="padding-0">
+            <ion-button
+              *ngIf="item.action == 'added'"
+              (click)="
+                setOpen(true, item.post_uid, item.text, item.privacy, $event)
+              "
+              style="float: left"
+              expand="block"
+              fill="clear"
+              shape="round"
+            >
+              <ion-icon name="create-outline"></ion-icon> &nbsp; Edit
+            </ion-button>
+            <ion-button
+              *ngIf="item.action == 'added'"
+              style="float: left"
+              (click)="presentAlert(item.post_uid, index, $event)"
+              expand="block"
+              fill="clear"
+              shape="round"
+              color="danger"
+            >
+              <ion-icon name="trash-outline"></ion-icon> Remove
+            </ion-button>
+            <ion-button
+              *ngIf="item.action == 'shared'"
+              (click)="openShareModal2(item, $event)"
+              style="float: left"
+              expand="block"
+              fill="clear"
+              shape="round"
+            >
+              <ion-icon name="create-outline"></ion-icon> &nbsp; Edit
+            </ion-button>
+            <ion-button
+              *ngIf="item.action == 'shared'"
+              style="float: left"
+              (click)="presentAlert2(item.post_uid, index)"
+              expand="block"
+              fill="clear"
+              shape="round"
+              color="danger"
+            >
+              <ion-icon name="trash-outline"></ion-icon> Remove
+            </ion-button>
+          </ion-content>
+        </ng-template>
+      </ion-popover>
+    </div>
+  </div>
+  <div class="row pb-2" *ngIf="item.action == 'shared'">
+    <div class="col-md-1"></div>
+    <div class="col-md-11 px-4">
+      <div class="row p-3 g-border">
+        <div class="col-md-1 text-center">
+          <img
+            *ngIf="item.shared_user?.profile_image"
+            src="{{ profile_image_path }}/{{ item.shared_user?.profile_image }}"
+            width="50px"
+          />
+          <img
+            *ngIf="!item.shared_user?.profile_image"
+            src="assets/icon/dark.png"
+            width="50px"
+          />
+        </div>
+        <div class="col-md-11 px-3">
+          <p class="name">
+            <b
+              >{{ item.shared_user?.fname | titlecase }}
+              {{ item.shared_user?.lname | titlecase }}</b
+            >&nbsp;
+            <span
+              >@{{ item.shared_user?.username | titlecase }} .
+              {{ getNowDate(item.modified_date) | timeAgo }}</span
+            >
+          </p>
+          <p class="para" [innerHTML]="item.text"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- share end -->
+
+  <!-- added start -->
+  <div class="row p-3 pb-1" *ngIf="item.action == 'added'">
+    <div class="col-md-1 text-center">
+      <img
+        *ngIf="item.user?.profile_image"
+        src="{{ profile_image_path }}/{{ item.user?.profile_image }}"
+        width="50px"
+      />
+      <img
+        *ngIf="!item.user?.profile_image"
+        src="assets/icon/dark.png"
+        width="50px"
+      />
+    </div>
+    <div class="col-md-9 px-2">
+      <p class="name">
+        <b
+          >{{ item.user?.fname | titlecase }}
+          {{ item.user?.lname | titlecase }}</b
+        >&nbsp;
+        <span
+          >@{{ item.user?.username }}.
+          {{ getNowDate(item.modified_date) | timeAgo }}</span
+        >
+      </p>
+      <p [innerHTML]="item.text"></p>
+    </div>
+    <div class="col-md-2 px-2" *ngIf="vestLogin">
+      <img
+        src="assets/img/dot.png"
+        class="d-block ms-auto"
+        *ngIf="item.user?.user_uid == this.vestLogin.user_uid"
+        id="click-trigger{{ index }}"
+        (click)="
+          goDetailsPost(item.post_uid, item?.user.user_uid, 'setopen', $event)
+        "
+        width="15px"
+      />
+      <ion-popover
+        style="--width: 140px !important"
+        keep-contents-mounted="true"
+        #popover
+        [isOpen]="isOpen"
+        (didDismiss)="isOpen = false"
+        *ngIf="item.user?.user_uid == this.vestLogin.user_uid"
+      >
+        <ng-template>
+          <ion-content class="padding-0">
+            <ion-button
+              *ngIf="item.action == 'added'"
+              (click)="
+                setOpen(true, item.post_uid, item.text, item.privacy, $event)
+              "
+              style="float: left"
+              expand="block"
+              fill="clear"
+              shape="round"
+            >
+              <ion-icon name="create-outline"></ion-icon> &nbsp; Edit
+            </ion-button>
+            <ion-button
+              *ngIf="item.action == 'added'"
+              style="float: left"
+              (click)="presentAlert(item.post_uid, index, $event)"
+              expand="block"
+              fill="clear"
+              shape="round"
+              color="danger"
+            >
+              <ion-icon name="trash-outline"></ion-icon> Remove
+            </ion-button>
+            <ion-button
+              *ngIf="item.action == 'shared'"
+              (click)="openShareModal2(item, $event)"
+              style="float: left"
+              expand="block"
+              fill="clear"
+              shape="round"
+            >
+              <ion-icon name="create-outline"></ion-icon> &nbsp; Edit
+            </ion-button>
+            <ion-button
+              *ngIf="item.action == 'shared'"
+              style="float: left"
+              (click)="presentAlert2(item.post_uid, index)"
+              expand="block"
+              fill="clear"
+              shape="round"
+              color="danger"
+            >
+              <ion-icon name="trash-outline"></ion-icon> Remove
+            </ion-button>
+          </ion-content>
+        </ng-template>
+      </ion-popover>
+    </div>
+  </div>
+
+  <!-- added end -->
+</div>
+<ion-modal [isOpen]="isModalOpen" (willDismiss)="onWillDismiss()">
+  <ng-template>
+    <ion-content class="ion-padding">
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12">
+            <ion-buttons>
+              <ion-button (click)="cancel()">X</ion-button>
+            </ion-buttons>
+          </ion-col>
+          <ion-col size="12">
+            <!-- <angular-editor
+              [(ngModel)]="htmlContent"
+              [config]="config"
+            ></angular-editor> -->
+            <quill-editor
+              trackChanges="all"
+              (onEditorCreated)="setFocus($event, editor)"
+              [(ngModel)]="htmlContent"
+              style="
+                height: 430px;
+                display: flex;
+                flex-direction: column-reverse;
+              "
+              customToolbarPosition="bottom"
+            >
+              <div
+                quill-editor-toolbar
+                style="position: absolute; width: 100%; border: none"
+              >
+                <span class="ql-formats">
+                  <button class="ql-bold"></button>
+                  <button class="ql-italic"></button>
+                  <button class="ql-underline"></button>
+                </span>
+                <span class="ql-formats">
+                  <select class="ql-size" title="Size">
+                    <option value="huge">Headline</option>
+                    <option value="large">Body</option>
+                    <option value="small">Caption</option>
+                  </select>
+                </span>
+                <span class="ql-formats">
+                  <button class="ql-image" [title]="'Image'"></button>
+                </span>
+                <span class="ql-formats">
+                  <select class="ql-color"></select>
+                </span>
+                <span class="ql-formats">
+                  <button class="ql-list" value="ordered"></button>
+                </span>
+                <span class="ql-formats">
+                  <button class="ql-link"></button>
+                </span>
+                <ion-button
+                  id="{{ item?.post_uid }}picker"
+                  style="margin-top: -5px"
+                  fill="clear"
+                  color="success"
+                >
+                  <ion-icon icon="calendar"></ion-icon>
+                </ion-button>
+                <ion-popover
+                  trigger="{{ item?.post_uid }}picker"
+                  triggerAction="click"
+                  show-backdrop="false"
+                  side="top"
+                  alignment="center-number"
+                >
+                  <ng-template>
+                    <ion-datetime
+                      [min]="minDate"
+                      [max]="maxDate"
+                      #popoverDatetime
+                      presentation="date-time"
+                      showDefaultButtons="true"
+                      locale="en-GB"
+                      hourCycle="h12"
+                      (ionChange)="formatDate(popoverDatetime.value)"
+                    ></ion-datetime>
+                  </ng-template>
+                </ion-popover>
+                <ion-button
+                  style="margin-top: -5px"
+                  [ngStyle]="{ color: privacy == 'public' ? '#1DCF5B' : '' }"
+                  (click)="setOpenprivacy(false, 'public')"
+                  [color]="privacy"
+                  fill="clear"
+                  shape="round"
+                >
+                  Public
+                </ion-button>
+                <!-- <ion-button
+                  fill="clear"
+                  color="dark"
+                  style="cursor: pointer; margin-top: -5px"
+                  >Attach
+                  <input
+                    type="file"
+                    id="myFileInput"
+                    (change)="uploadFile($event)"
+                  />
+                </ion-button> -->
+                <ion-button
+                  style="margin-top: -5px"
+                  fill="solid"
+                  color="success"
+                  shape="round"
+                  (click)="onsubmit('live')"
+                  [disabled]="isFileUpload || isPosted"
+                >
+                  Edit
+                </ion-button>
+                <ion-button
+                  style="margin-top: -5px"
+                  fill="solid"
+                  color="success"
+                  shape="round"
+                  (click)="onsubmit('draft')"
+                  [disabled]="isFileUpload || isPosted"
+                >
+                  Save as draft
+                </ion-button>
+              </div>
+            </quill-editor>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<ion-modal [isOpen]="isModalOpen2" (willDismiss)="onWillDismiss2()">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar style="--background: transparent">
+        <ion-buttons slot="start">
+          <ion-button color="danger" (click)="onWillDismiss2()">X</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <ion-item fill="outline">
+        <ion-label position="floating">Enter message</ion-label>
+        <ion-textarea
+          [(ngModel)]="share_text"
+          placeholder="Enter message"
+        ></ion-textarea>
+      </ion-item>
+      <ion-text>
+        <div
+          style="text-align: justify; margin-bottom: 10px; padding: 15px"
+          [innerHTML]="sharePostDetails.text"
+        ></div>
+      </ion-text>
+      <div *ngFor="let file of sharePostDetails.files; let i = index">
+        <div *ngIf="file.type == 'image'">
+          <img
+            loading="lazy"
+            style="height: 240px"
+            src="{{ file_path }}{{ file.type }}s/{{ file.filename }}"
+            alt="file"
+          />
+        </div>
+        <div *ngIf="file.type == 'video'">
+          <video
+            src="{{ file_path }}{{ file.type }}s/{{ file.filename }}"
+            width="300"
+            height="200"
+            controls
+          ></video>
+        </div>
+        <div *ngIf="file.type == 'audio'">
+          <video
+            src="{{ file_path }}{{ file.type }}s/{{ file.filename }}"
+            width="300"
+            height="60"
+            controls
+          ></video>
+        </div>
+      </div>
+    </ion-content>
+    <ion-footer>
+      <ion-toolbar style="--background: transparent">
+        <ion-buttons slot="end" style="margin-right: 15px">
+          <ion-button
+            (click)="sharePost()"
+            fill="solid"
+            [disabled]="isPosted"
+            color="success"
+            shape="round"
+            ><span *ngIf="isShareEdit">Edit</span>
+            <span *ngIf="!isShareEdit">Share</span>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-footer>
+  </ng-template>
+</ion-modal>

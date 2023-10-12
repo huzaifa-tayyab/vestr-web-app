@@ -1,0 +1,188 @@
+<ion-content [fullscreen]="true">
+  <ion-grid style="--ion-grid-padding: 0">
+    <ion-row>
+      <ion-col
+        size-sm="5"
+        class="ion-hide-sm-down"
+        style="
+          background-image: url('assets/icon/1.png');
+          height: 100vh;
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: cover;
+        "
+      >
+        <h2 class="demoh2">Invest with the best.</h2>
+      </ion-col>
+      <ion-col size-sm="7" style="height: 100vh; overflow: auto">
+        <ion-grid fixed style="padding: 24px; margin-top: 10%">
+          <ion-row>
+            <ion-col size="10">
+              <img src="assets/icon/dark.png" style="height: 65px" alt="logo" />
+            </ion-col>
+            <ion-col size="2">
+              <!-- <app-theme-set></app-theme-set> -->
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12">
+              <ion-label style="font-size: 22px; font-weight: 600"
+                >Welcome back 👋🏽</ion-label
+              >
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12">
+              <ion-label style="font-size: 16px; font-weight: 400"
+                >Log in to pick up where you left off.</ion-label
+              >
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12">
+              <ion-label
+                style="font-size: 16px; font-weight: 400; color: #707070"
+                >Don’t have an account?
+                <span
+                  style="color: #1dcf5b; cursor: pointer"
+                  routerLink="/home/signup"
+                  >Create an account</span
+                >
+              </ion-label>
+            </ion-col>
+          </ion-row>
+          <form [formGroup]="orderForm" (ngSubmit)="login()">
+            <div
+              formArrayName="items"
+              *ngFor="let item of orderFormControl.controls; let i = index;let last = last;"
+            >
+              <div [formGroupName]="i">
+                <ion-row style="margin-top: 20px">
+                  <ion-col size="12">
+                    <ion-item style="margin-bottom: 10px">
+                      <ion-label
+                        style="
+                          font-size: 16px;
+                          font-weight: 600;
+                          margin-bottom: 8px;
+                        "
+                        position="stacked"
+                        >Email</ion-label
+                      >
+                      <ion-input
+                        placeholder="Enter Email"
+                        formControlName="email"
+                      ></ion-input>
+                    </ion-item>
+                    <ion-text
+                      color="danger"
+                      style="margin-left: 15px"
+                      *ngIf="(isSubmitted) && orderForm.get('items')['controls'][i].controls.email.errors?.required"
+                    >
+                      Email is required.
+                    </ion-text>
+                    <ion-text
+                      color="danger"
+                      style="margin-left: 15px"
+                      *ngIf="(isSubmitted) && orderForm.get('items')['controls'][i].controls.email.errors?.pattern"
+                    >
+                      Valid Email is required.
+                    </ion-text>
+                  </ion-col>
+                </ion-row>
+                <ion-row style="margin-top: 10px">
+                  <ion-col size="12">
+                    <ion-item style="margin-bottom: 10px">
+                      <ion-label
+                        style="
+                          font-size: 16px;
+                          font-weight: 600;
+                          margin-bottom: 8px;
+                        "
+                        position="stacked"
+                        >Password</ion-label
+                      >
+                      <ion-input
+                        [type]="password"
+                        formControlName="password"
+                        (ionChange)="checkValue()"
+                        placeholder="Enter Password"
+                      ></ion-input>
+                      <ion-icon
+                        class="suffix-icon"
+                        style="margin-top: 25px"
+                        (click)="showPassword('text')"
+                        *ngIf="password==='password'"
+                        color="dark"
+                        name="eye-off"
+                        slot="end"
+                      ></ion-icon>
+                      <ion-icon
+                        class="suffix-icon"
+                        style="margin-top: 25px"
+                        (click)="showPassword('password')"
+                        *ngIf="password==='text'"
+                        color="dark"
+                        name="eye"
+                        slot="end"
+                      ></ion-icon>
+                    </ion-item>
+                    <ion-text
+                      color="danger"
+                      style="margin-left: 15px"
+                      *ngIf="(isSubmitted) && !isEightCharater"
+                    >
+                      Minimum 8 characters <br /><br />
+                    </ion-text>
+                    <ion-text
+                      color="danger"
+                      style="margin-left: 15px"
+                      *ngIf="(isSubmitted) && !oneUpperLowerCase"
+                    >
+                      One uppercase & lowercase letter <br /><br />
+                    </ion-text>
+                    <ion-text
+                      color="danger"
+                      style="margin-left: 15px"
+                      *ngIf="(isSubmitted) && !oneNumber"
+                    >
+                      One number <br /><br />
+                    </ion-text>
+                    <ion-text
+                      color="danger"
+                      style="margin-left: 15px"
+                      *ngIf="(isSubmitted) && !oneSpecial"
+                    >
+                      One special character
+                    </ion-text>
+                  </ion-col>
+                </ion-row>
+                <ion-row style="margin-top: 10px">
+                  <ion-col size="12">
+                    <ion-label
+                      routerLink="/home/forgot-password"
+                      style="color: #1dcf5b; cursor: pointer"
+                      >Forgot password?</ion-label
+                    >
+                  </ion-col>
+                </ion-row>
+                <ion-row style="margin-top: 10px">
+                  <ion-col size-sm="12" size-md="12" size-lg="6">
+                    <ion-button
+                      type="submit"
+                      color="success"
+                      expand="block"
+                      shape="round"
+                    >
+                      Login
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+              </div>
+            </div>
+          </form>
+        </ion-grid>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

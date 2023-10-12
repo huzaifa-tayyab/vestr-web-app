@@ -1,0 +1,40 @@
+.txt:hover {
+  text-decoration: underline;
+}
+.txtselect:hover {
+  // color: lightgray;
+  // background: rgb(240, 240, 240);
+  background: rgb(34, 34, 34);
+}
+.txtselect2:hover {
+  // color: lightgray;
+  background: rgb(240, 240, 240);
+  // background: rgb(34, 34, 34);
+}
+.padding-0 {
+  padding: 0 !important;
+  padding-top: 0 !important ;
+}
+
+.sname {
+  font-size: 15px;
+  font-weight: 600;
+}
+p::first-letter {
+  text-transform: capitalize;
+}
+.text-2 {
+  color: #707070;
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.button-native {
+  padding: 0;
+  padding-inline-start: 0;
+  padding-inline-end: 0;
+}
+* {
+  margin-bottom: 0;
+  margin-bottom: 0;
+}

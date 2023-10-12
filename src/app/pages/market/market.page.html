@@ -1,0 +1,559 @@
+<ion-content [fullscreen]="true">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12 p-2 px-3 border-bottom">
+        <b class="title">Market</b>
+      </div>
+    </div>
+    <div class="row px-2 mt-3">
+      <div class="col-6 p-2">
+        <b class="title">Key metrics</b>
+      </div>
+      <div class="col-6 pt-2 text-right">
+        <b class="title-2"><u></u></b>
+      </div>
+    </div>
+    <div class="row px-0 pt-3">
+      <div>
+        <div
+          class="wrap-"
+          *ngFor="let item of ketMetricSymbol; let i = index; let last = last"
+        >
+          <div class="mx-1 my-2">
+            <div class="row checkhover">
+              <div
+                (click)="goMarketDetails(item.id)"
+                class="col-7"
+                [ngClass]="{'border-stock': getIndexPercentage(item.data?.values[0]).key, 'border-stock-danger': !getIndexPercentage(item.data?.values[0]).key}"
+              >
+                <b class="stock">{{item.id}}</b>
+                <span class="font-sm font-12 d-block">{{item.name}}</span>
+              </div>
+              <div class="col-5 text-right">
+                <b class="stock">{{ item.data?.values[0].close | currency }}</b>
+                <span
+                  class="d-block font-12"
+                  [ngClass]="{'g-text': getIndexPercentage(item.data?.values[0]).key, 'r-text': !getIndexPercentage(item.data?.values[0]).key}"
+                  >{{ getIndexPercentage(item.data?.values[0]).value | number :
+                  "1.2-2" }}%</span
+                >
+              </div>
+              <!-- <div class="col-12">
+                <span *ngIf="item?.data?.values.length > 0">
+                  <app-twelve-graph
+                    [type]="'stock'"
+                    [height]="50"
+                    [index]="i"
+                    [graphdata]="item?.data?.values"
+                  ></app-twelve-graph>
+                </span>
+              </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row px-2 mt-3">
+      <div class="col-12 p-2">
+        <b class="title">Market sentiment</b>
+      </div>
+      <div class="col-12 pt-2">
+        <button
+          (click)="setSentiment('today')"
+          class="marketbtn"
+          [ngClass]="{'marketbtn': sentiments_filter=='today','marketbtn2': sentiments_filter!='today'}"
+        >
+          Today</button
+        >&nbsp;&nbsp;
+        <button
+          (click)="setSentiment('yesterday')"
+          class="marketbtn"
+          [ngClass]="{'marketbtn': sentiments_filter=='yesterday','marketbtn2': sentiments_filter!='yesterday'}"
+        >
+          Yesterday</button
+        >&nbsp;&nbsp;
+        <button
+          (click)="setSentiment('last7days')"
+          class="marketbtn"
+          [ngClass]="{'marketbtn': sentiments_filter=='last7days','marketbtn2': sentiments_filter!='last7days'}"
+        >
+          This week</button
+        >&nbsp;&nbsp;
+        <button
+          (click)="setSentiment('last30days')"
+          class="marketbtn"
+          [ngClass]="{'marketbtn': sentiments_filter=='last30days','marketbtn2': sentiments_filter!='last30days'}"
+        >
+          This month
+        </button>
+      </div>
+      <div class="col-12 pt-3">
+        <b class="title-2" style="font-size: 18px">
+          Sentiment score: {{sentimentsScore}}
+          <!-- , Positive:
+          <span style="color: #1dcf5b">{{TotalPositive}}%</span>, Neutral:
+          <span style="color: #cbcf1d">{{TotalNeutral}}%</span>, Negative:
+          <span style="color: #ca222c">{{TotalNegative}}%</span> -->
+        </b>
+      </div>
+    </div>
+    <div class="row px-0 pt-3" *ngIf="sentimentsScore">
+      <div class="col-12">
+        <div class="progress-stacked" style="height: 30px">
+          <div
+            style="height: 30px"
+            class="progress"
+            role="progressbar"
+            aria-label="Segment one"
+            aria-valuenow="15"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            [style]="'width:'+TotalPositive+'%'"
+          >
+            <div class="progress-bar" style="background: #1dcf5b">
+              <p style="font-weight: bold; font-size: 16px">
+                Positive - {{TotalPositive}}%
+              </p>
+            </div>
+          </div>
+          <div
+            style="height: 30px"
+            class="progress"
+            role="progressbar"
+            aria-label="Segment two"
+            aria-valuenow="30"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            [style]="'width:'+TotalNeutral+'%'"
+          >
+            <div class="progress-bar" style="background: #cbcf1d">
+              <p style="font-weight: bold; font-size: 16px">
+                Neutral - {{TotalNeutral}}%
+              </p>
+            </div>
+          </div>
+          <div
+            style="height: 30px"
+            class="progress"
+            role="progressbar"
+            aria-label="Segment three"
+            aria-valuenow="20"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            [style]="'width:'+TotalNegative+'%'"
+          >
+            <div class="progress-bar" style="background: #ca222c">
+              <p style="font-weight: bold; font-size: 16px">
+                Negative - {{TotalNegative}}%
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- <app-multi-graph
+          (userDetails)="userDetails($event)"
+          [type]="'stock'"
+          [duration]="duration"
+          [index]="'stocks'"
+          [symbol]="symbols"
+        ></app-multi-graph> -->
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid mt-4">
+    <div class="row px-2 mt-3">
+      <div class="col-6 p-2">
+        <b class="title">Most mentioned</b>
+      </div>
+    </div>
+    <div class="row px-2 mt-1">
+      <div class="col-12 p-2">
+        <button
+          (click)="changeMention('last7days')"
+          class="marketbtn"
+          [ngClass]="{'marketbtn': filter=='last7days','marketbtn2': filter!='last7days'}"
+        >
+          This week</button
+        >&nbsp;&nbsp;
+        <button
+          (click)="changeMention('last30days')"
+          class="marketbtn"
+          [ngClass]="{'marketbtn': filter=='last30days','marketbtn2': filter!='last30days'}"
+        >
+          This month</button
+        >&nbsp;&nbsp;
+        <button
+          (click)="changeMention('yeartodate')"
+          class="marketbtn"
+          [ngClass]="{'marketbtn': filter=='yeartodate','marketbtn2': filter!='yeartodate'}"
+        >
+          This year
+        </button>
+      </div>
+    </div>
+    <div class="row px-3 mt-1">
+      <div class="col-2 p-2">
+        <p style="font-size: 14px; color: #b3b3b3">Ticker</p>
+      </div>
+      <div class="col-4 p-2">
+        <p style="font-size: 14px; color: #b3b3b3">Name</p>
+      </div>
+      <div class="col-2 p-2 text-center">
+        <p style="font-size: 14px; color: #b3b3b3">Sentiment score</p>
+      </div>
+      <div class="col-1 p-2 text-center">
+        <p style="font-size: 14px; color: #b3b3b3">Positive</p>
+      </div>
+      <div class="col-1 p-2 text-center">
+        <p style="font-size: 14px; color: #b3b3b3">Neutral</p>
+      </div>
+      <div class="col-1 p-2 text-center">
+        <p style="font-size: 14px; color: #b3b3b3">Negative</p>
+      </div>
+      <div class="col-1 p-2 text-center">
+        <p style="font-size: 14px; color: #b3b3b3">Mentions</p>
+      </div>
+    </div>
+    <div
+      class="row px-3 mt-1"
+      *ngFor="let item of mentioned; let i=index"
+      (click)="goMarketDetails(item.ticker)"
+      style="cursor: pointer"
+    >
+      <div
+        class="col-2 p-2 checkhover"
+        [ngClass]="{'border-stock': item.sentiment_score>=0, 'border-stock-danger': item.sentiment_score<0}"
+      >
+        <p style="font-size: 16px; font-weight: bold">{{item.ticker}}</p>
+      </div>
+      <div class="col-4 p-2">
+        <p style="font-size: 16px; font-weight: bold">{{item.name}}</p>
+      </div>
+      <div class="col-2 p-2 text-center">
+        <p
+          style="font-size: 16px; font-weight: bold"
+          [ngClass]="{'g-text': item.sentiment_score>=0, 'r-text': item.sentiment_score<0}"
+        >
+          {{item.sentiment_score}}
+        </p>
+      </div>
+      <div class="col-1 p-2 text-center">
+        <p style="font-size: 16px; font-weight: bold">
+          {{getSemTotal(item, 'positive')}}%
+          <!-- {{item.positive_mentions}} -->
+        </p>
+      </div>
+      <div class="col-1 p-2 text-center">
+        <p style="font-size: 16px; font-weight: bold">
+          {{getSemTotal(item, 'neutral')}}%
+          <!-- {{item.neutral_mentions}} -->
+        </p>
+      </div>
+      <div class="col-1 p-2 text-center">
+        <p style="font-size: 16px; font-weight: bold">
+          {{getSemTotal(item, 'negative')}}%
+          <!-- {{item.negative_mentions}} -->
+        </p>
+      </div>
+      <div class="col-1 p-2 text-center">
+        <p style="font-size: 16px; font-weight: bold">
+          {{item.total_mentions}}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid mt-4">
+    <div class="row px-2 mt-3">
+      <div class="col-6 p-2">
+        <b class="title">Biggest movers</b>
+      </div>
+      <div class="col-6 pt-2 text-right">
+        <ion-icon
+          class="newshead"
+          style="font-size: 28px; cursor: pointer"
+          id="prebtn"
+          name="chevron-back-outline"
+        ></ion-icon
+        >&nbsp;
+        <ion-icon
+          class="newshead"
+          style="font-size: 28px; cursor: pointer"
+          id="nextbtn"
+          name="chevron-forward-outline"
+        ></ion-icon>
+
+        <!-- <b class="title-2"><u>Today</u></b> -->
+      </div>
+    </div>
+    <div class="row px-1 scrl" style="overflow: auto">
+      <swiper-container
+        [slidesPerView]="3"
+        [spaceBetween]="10"
+        [mousewheel]="true"
+        style="min-width: 850px"
+      >
+        <swiper-slide
+          *ngFor="let item of biggerMoverStocks; let i = index; let last = last"
+        >
+          <div class="col-md-12 mt-3">
+            <div class="mx-1 my-2" style="padding-left: 10px">
+              <div class="row checkhover" (click)="goTodetails(item.symbol)">
+                <div
+                  class="col-8 pe-0"
+                  [ngClass]="{'border-stock': getIndexPercentage(item.data).key, 'border-stock-danger': !getIndexPercentage(item.data).key}"
+                >
+                  <b class="stock">{{ item.symbol }}</b>
+                  <span class="font-sm font-12 d-block">{{ item.name }}</span>
+                </div>
+                <div class="col-4 text-right">
+                  <b class="stock">{{ item.data?.close | currency }}</b>
+                  <span
+                    class="d-block font-12"
+                    [ngClass]="{'g-text': getIndexPercentage(item.data).key, 'r-text': !getIndexPercentage(item.data).key}"
+                    >{{ getIndexPercentage(item.data).value | number : "1.2-2"
+                    }}%</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </swiper-slide>
+      </swiper-container>
+    </div>
+  </div>
+
+  <div class="container-fluid mt-4">
+    <div class="row px-2 mt-3">
+      <div class="col-6 p-2">
+        <b class="title">Highest market cap</b>
+      </div>
+      <div class="col-6 pt-2 text-right">
+        <ion-icon
+          class="newshead"
+          style="font-size: 28px; cursor: pointer"
+          id="prebtn2"
+          name="chevron-back-outline"
+        ></ion-icon
+        >&nbsp;
+        <ion-icon
+          class="newshead"
+          style="font-size: 28px; cursor: pointer"
+          id="nextbtn2"
+          name="chevron-forward-outline"
+        ></ion-icon>
+      </div>
+    </div>
+    <div class="row px-1 scrl" style="overflow: auto">
+      <swiper-container
+        id="swiper2"
+        [slidesPerView]="3"
+        [spaceBetween]="30"
+        [mousewheel]="true"
+        style="min-width: 850px"
+      >
+        <swiper-slide
+          *ngFor="let item of multiIndex; let i = index; let last = last"
+        >
+          <div class="col-md-12 mt-3" (click)="goTodetails(item.symbol)">
+            <div class="mx-1 my-2" style="padding-left: 10px">
+              <div class="row checkhover">
+                <div
+                  class="col-7"
+                  [ngClass]="{'border-stock': item.change >= 0,'border-stock-danger': item.change < 0}"
+                >
+                  <b class="stock">{{item.symbol}}</b>
+                  <span class="font-sm font-12 d-block">{{item.name}}</span>
+                </div>
+                <div class="col-5 text-right">
+                  <b class="stock">{{ item.data?.close | currency }}</b>
+                  <span
+                    class="d-block font-12"
+                    [ngClass]="{'g-text': item.change >= 0,'r-text': item.change < 0}"
+                    >({{ item.percent_change | number : "1.1-1" }}%)</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </swiper-slide>
+      </swiper-container>
+    </div>
+  </div>
+
+  <div class="container-fluid mt-4">
+    <div class="row px-2 mt-3">
+      <div class="col-6 p-2">
+        <b class="title">In the news</b>
+      </div>
+    </div>
+    <div class="row px-3">
+      <div class="col-md-4 mt-3">
+        <div class="mx-1 my-2">
+          <div class="row">
+            <div class="col-7 border-stock">
+              <b class="stock">TSLA</b>
+              <span class="font-sm font-12 d-block">Tesla Inc</span>
+            </div>
+            <div class="col-5 text-right">
+              <b class="stock">$324.15</b>
+              <span class="g-text d-block font-12">+15.41%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mt-3">
+        <div class="mx-1 my-2">
+          <div class="row">
+            <div class="col-7 border-stock">
+              <b class="stock">TSLA</b>
+              <span class="font-sm font-12 d-block">Tesla Inc</span>
+            </div>
+            <div class="col-5 text-right">
+              <b class="stock">$324.15</b>
+              <span class="g-text d-block font-12">+15.41%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mt-3">
+        <div class="mx-1 my-2">
+          <div class="row">
+            <div class="col-7 border-stock">
+              <b class="stock">TSLA</b>
+              <span class="font-sm font-12 d-block">Tesla Inc</span>
+            </div>
+            <div class="col-5 text-right">
+              <b class="stock">$324.15</b>
+              <span class="g-text d-block font-12">+15.41%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mt-3">
+        <div class="mx-1 my-2">
+          <div class="row">
+            <div class="col-7 border-stock">
+              <b class="stock">TSLA</b>
+              <span class="font-sm font-12 d-block">Tesla Inc</span>
+            </div>
+            <div class="col-5 text-right">
+              <b class="stock">$324.15</b>
+              <span class="g-text d-block font-12">+15.41%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mt-3">
+        <div class="mx-1 my-2">
+          <div class="row">
+            <div class="col-7 border-stock">
+              <b class="stock">TSLA</b>
+              <span class="font-sm font-12 d-block">Tesla Inc</span>
+            </div>
+            <div class="col-5 text-right">
+              <b class="stock">$324.15</b>
+              <span class="g-text d-block font-12">+15.41%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mt-3">
+        <div class="mx-1 my-2">
+          <div class="row">
+            <div class="col-7 border-stock">
+              <b class="stock">TSLA</b>
+              <span class="font-sm font-12 d-block">Tesla Inc</span>
+            </div>
+            <div class="col-5 text-right">
+              <b class="stock">$324.15</b>
+              <span class="g-text d-block font-12">+15.41%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mt-3">
+        <div class="mx-1 my-2">
+          <div class="row">
+            <div class="col-7 border-stock">
+              <b class="stock">TSLA</b>
+              <span class="font-sm font-12 d-block">Tesla Inc</span>
+            </div>
+            <div class="col-5 text-right">
+              <b class="stock">$324.15</b>
+              <span class="g-text d-block font-12">+15.41%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mt-3">
+        <div class="mx-1 my-2">
+          <div class="row">
+            <div class="col-7 border-stock">
+              <b class="stock">TSLA</b>
+              <span class="font-sm font-12 d-block">Tesla Inc</span>
+            </div>
+            <div class="col-5 text-right">
+              <b class="stock">$324.15</b>
+              <span class="g-text d-block font-12">+15.41%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mt-3">
+        <div class="mx-1 my-2">
+          <div class="row">
+            <div class="col-7 border-stock">
+              <b class="stock">TSLA</b>
+              <span class="font-sm font-12 d-block">Tesla Inc</span>
+            </div>
+            <div class="col-5 text-right">
+              <b class="stock">$324.15</b>
+              <span class="g-text d-block font-12">+15.41%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid mt-4">
+    <div class="row px-2 mt-3">
+      <div class="col-6 p-2">
+        <b class="title">Most active (highest volume)</b>
+      </div>
+    </div>
+    <div class="row px-3">
+      <div class="col-md-4 mt-3" *ngFor="let item of rows; let i=index">
+        <div class="mx-1 my-2" (click)="goTodetails(item.symbol)">
+          <div class="row checkhover">
+            <div
+              class="col-7"
+              [ngClass]="{'border-stock': getIndexPercentage(item).key, 'border-stock-danger': !getIndexPercentage(item).key}"
+            >
+              <b class="stock">{{item.symbol}}</b>
+              <span class="font-sm font-12 d-block">{{item.name}}</span>
+            </div>
+            <div class="col-5 text-right">
+              <b class="stock">{{item.close | currency}}</b>
+              <span
+                class="d-block font-12"
+                [ngClass]="{'g-text': getIndexPercentage(item).key, 'r-text': !getIndexPercentage(item).key}"
+                >{{ getIndexPercentage(item).value | number : "1.2-2" }}%</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid mt-4">
+    <div class="row px-2 mt-3">
+      <div class="col-6 p-2">
+        <b class="title">Commodities</b>
+      </div>
+    </div>
+  </div>
+</ion-content>

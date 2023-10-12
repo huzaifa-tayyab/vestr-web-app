@@ -1,0 +1,318 @@
+<ion-content [fullscreen]="true">
+  <section class="d-flex">
+    <!--left sidebar start-->
+    <div class="left">
+      <div class="py-4">
+        <img
+          class="logo"
+          [src]="darktheme ? 'assets/icon/light.png' : 'assets/icon/dark.png'"
+        />
+      </div>
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <ul class="menus">
+              <li
+                *ngFor="let item of deskMenu; let i=index"
+                [routerLink]="[ item.link]"
+                routerLinkActive="active"
+              >
+                <!-- <img [src]="item.icon" class="icon" />&nbsp;<b>{{item.name}}</b> -->
+                <ion-icon
+                  style="margin-bottom: -5px"
+                  slot="start"
+                  [src]="item.icon"
+                  [routerLink]="[ item.link]"
+                  routerLinkActive="active"
+                  class="icon-margin"
+                ></ion-icon
+                >&nbsp;&nbsp;&nbsp;<b>{{item.name}}</b>
+              </li>
+            </ul>
+          </div>
+          <div class="col-12">
+            <button routerLink="/app/add-post" class="g-button mt-4">
+              <i class="fas fa-plus"></i>
+              <span [ngClass]="{'ad-post1': !isTab}">Post</span>
+            </button>
+            <button
+              class="g-button-outline mt-2"
+              (click)="toggle(darktheme ? 'dark' : 'light')"
+            >
+              <i class="fas fa-moon"></i>
+              <span>{{darktheme ? 'Light' : 'Dark'}} Mode</span>
+            </button>
+          </div>
+          <div class="col-12">
+            <div class="ad mt-3">
+              <p>Put your ad here. Email sponsor@vestr.io for information.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--left sidebar end-->
+
+    <!--feed start-->
+    <div class="feed" style="flex: 2">
+      <ion-router-outlet style="position: static"></ion-router-outlet>
+    </div>
+    <!--feed end-->
+
+    <!--right sidebar start-->
+    <div class="right ion-hide-lg-down" style="width: 320px">
+      <div
+        style="
+          position: fixed;
+          overflow: auto;
+          top: 0;
+          right: 0;
+          width: 320px;
+          height: 100vh;
+        "
+      >
+        <div class="container">
+          <div class="row px-4 pt-3">
+            <div class="col-12">
+              <label class="position-relative w-100">
+                <span class="export sv-icons-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="feather feather-search"
+                  >
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                </span>
+                <input
+                  type="search"
+                  class="search"
+                  placeholder="Search"
+                  (click)="handleChange($event)"
+                  (keyup)="handleChange($event)"
+              /></label>
+              <span class="font-sm my-2 d-block">
+                <ion-list
+                  lines="none"
+                  style="
+                    position: absolute;
+                    z-index: 2;
+                    background-color: #f2fff4 !important;
+                    width: 94%;
+                    border: 1px solid #b5ffbb;
+                    border-radius: 5px;
+                    margin-top: 5px;
+                  "
+                  *ngIf="searchItem && !darktheme"
+                >
+                  <ion-item *ngFor="let result of results">
+                    <span *ngIf="result.type=='user'">
+                      <ion-label
+                        style="cursor: pointer"
+                        (click)="goToDetails2(result.data, result.type)"
+                        >{{ result.data.fname }} {{ result.data.lname }} - {{
+                        result.type }}</ion-label
+                      >
+                    </span>
+                    <span *ngIf="result.type=='stock'">
+                      <ion-label
+                        style="cursor: pointer"
+                        (click)="goToDetails2(result.data, result.type)"
+                        >{{ result.data.symbol }} ({{result.data.exchange}}) -
+                        {{ result.type }}</ion-label
+                      >
+                    </span>
+                    <span *ngIf="result.type=='post'">
+                      <ion-label
+                        style="cursor: pointer"
+                        (click)="goToDetails2(result.data, result.type)"
+                        >{{ result.data.text }} - {{ result.type }}</ion-label
+                      >
+                    </span>
+                    <span *ngIf="result.type=='room'">
+                      <ion-label
+                        style="cursor: pointer"
+                        (click)="goToDetails2(result.data, result.type)"
+                        >{{ result.data.name }} - {{ result.type }}</ion-label
+                      >
+                    </span>
+                  </ion-item>
+                </ion-list>
+                <ion-list
+                  lines="none"
+                  style="
+                    position: absolute;
+                    z-index: 2;
+                    background-color: black !important;
+                    width: 100vw;
+                  "
+                  *ngIf="searchItem && darktheme"
+                >
+                  <ion-item *ngFor="let result of results">
+                    <span *ngIf="result.type=='user'">
+                      <ion-label
+                        style="cursor: pointer"
+                        (click)="goToDetails2(result.data, result.type)"
+                        >{{ result.data.fname }} {{ result.data.lname }} - {{
+                        result.type }}</ion-label
+                      >
+                    </span>
+                    <span *ngIf="result.type=='stock'">
+                      <ion-label
+                        style="cursor: pointer"
+                        (click)="goToDetails2(result.data, result.type)"
+                        >{{ result.data.symbol }} ({{result.data.exchange}}) -
+                        {{ result.type }}</ion-label
+                      >
+                    </span>
+                    <span *ngIf="result.type=='post'">
+                      <ion-label
+                        style="cursor: pointer"
+                        (click)="goToDetails2(result.data, result.type)"
+                        >{{ result.data.text }} - {{ result.type }}</ion-label
+                      >
+                    </span>
+                    <span *ngIf="result.type=='room'">
+                      <ion-label
+                        style="cursor: pointer"
+                        (click)="goToDetails2(result.data, result.type)"
+                        >{{ result.data.name }} - {{ result.type }}</ion-label
+                      >
+                    </span>
+                  </ion-item>
+                </ion-list>
+              </span>
+            </div>
+          </div>
+          <div class="row px-4">
+            <div class="col-12">
+              <b class="title">{{symbolState?.close | currency}} </b>
+              <span
+                *ngIf="getFollowPercentage(symbolState).key"
+                class="g-text d-block font-12"
+                >{{getFollowPercentage(symbolState).value | number:
+                '1.2-2'}}%</span
+              >
+              <span
+                *ngIf="!getFollowPercentage(symbolState).key"
+                class="r-text d-block font-12"
+                >{{getFollowPercentage(symbolState).value | number:
+                '1.2-2'}}%</span
+              >
+              <div *ngIf="symbolData.length>0">
+                <app-graph
+                  style="display: inline-block; width: 100%"
+                  [type]="'stock'"
+                  [index]="0"
+                  [content]="false"
+                  [height]="100"
+                  (changeAmount)="changeAmount($event)"
+                  [duration]="duration"
+                  [graphdata]="symbolData"
+                ></app-graph>
+              </div>
+
+              <div class="chart-border">
+                <button
+                  [ngClass]="{'avtive-btn': item.color}"
+                  class="btn-chart"
+                  *ngFor="let item of timeSlot; let i=index"
+                  (click)="getGraph(item , i)"
+                >
+                  {{item.name}}
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="row px-4 mt-4">
+            <div class="col-12 p-0">
+              <b class="title">Tech stocks</b>
+            </div>
+            <div
+              class="border-stock mx-1 my-2"
+              *ngFor="let item of stocks; let i=index"
+            >
+              <div class="row checkhover">
+                <div class="col-7" (click)="goMarketDetails(item.symbol)">
+                  <b class="stock">{{item.symbol}}</b>
+                  <span class="font-sm font-12 d-block">{{item.name}}</span>
+                </div>
+                <div class="col-5 text-right">
+                  <b class="stock">{{item.close | currency}}</b>
+                  <span
+                    *ngIf="getFollowPercentage(item).key"
+                    class="g-text d-block font-12"
+                    >{{getFollowPercentage(item).value | number:
+                    '1.2-2'}}%</span
+                  >
+                  <span
+                    *ngIf="!getFollowPercentage(item).key"
+                    class="r-text d-block font-12"
+                    >{{getFollowPercentage(item).value | number:
+                    '1.2-2'}}%</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row px-3 mt-4">
+            <div class="col-12">
+              <b class="title">Headlines</b>
+            </div>
+            <div>
+              <div
+                class="col-12 my-2 pb-3 border-bottom"
+                *ngFor="let item of news; let i=index;let last=last"
+              >
+                <p class="para checkhover" style="cursor: pointer">
+                  <span (click)="item.readmore=!item.readmore">
+                    {{item.headline}}
+                  </span>
+                  <span *ngIf="item.readmore"
+                    ><br />
+                    {{item.text}}
+                  </span>
+                </p>
+                <div style="margin-top: 5px">
+                  <span
+                    *ngIf="item?.tickers.length>0"
+                    class="tickers"
+                    style="
+                      width: 86px;
+                      height: 32px;
+
+                      padding: 5px;
+                      border-radius: 5px;
+                    "
+                    >{{item?.tickers[0]}} </span
+                  >&nbsp;&nbsp;
+                  <!-- [ngStyle]="{'border': item.sentiment=='Positive' ? '1px solid #1dcf5b' : '1px solid #d13f0f','color': item.sentiment=='Positive' ? '#1dcf5b' : '#d13f0f'}" -->
+                  <span
+                    class="newshead"
+                    [ngStyle]="{'border': item.sentiment=='Positive' ? '1px solid #1dcf5b' : (item.sentiment=='Negative' ? '1px solid #d13f0f' : '1px solid'),'color': item.sentiment=='Positive' ? '#1dcf5b' : (item.sentiment=='Negative' ? '#d13f0f' : '') }"
+                    style="
+                      width: 86px;
+                      height: 32px;
+                      padding: 5px;
+                      border-radius: 5px;
+                    "
+                    >{{item.sentiment}}</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--right sidebar end-->
+  </section>
+</ion-content>

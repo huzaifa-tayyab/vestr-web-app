@@ -1,0 +1,1530 @@
+<div class="">
+  <!-- share start -->
+  <div
+    class="row p-3 pb-1"
+    *ngIf="item.action == 'shared'"
+    (click)="goDetailsPost(item.post_uid, item?.user.user_uid, 'post', $event)"
+  >
+    <div
+      class="col-md-1 text-center"
+      *ngIf="item.action == 'shared' && item.share_text"
+    >
+      <img
+        style="height: 45px; border-radius: 50%"
+        *ngIf="item.user?.profile_image"
+        src="{{ profile_image_path }}/{{ item.user?.profile_image }}"
+        width="50px"
+      />
+      <img
+        *ngIf="!item.user?.profile_image"
+        src="assets/icon/dark.png"
+        width="50px"
+      />
+    </div>
+    <div class="col-md-9 px-2">
+      <p class="name">
+        <b
+          (click)="
+            goDetailsPost(item.post_uid, item?.user.user_uid, 'profile', $event)
+          "
+          >{{ item.user?.fname | titlecase }}
+          {{ item.user?.lname | titlecase }}</b
+        >&nbsp;
+        <span *ngIf="item.action == 'shared' && item.share_text"
+          >@{{ item.user?.username }}.
+          {{ getNowDate(item.modified_date) | timeAgo }}</span
+        >
+        <span *ngIf="item.action == 'shared' && !item.share_text"
+          >reposted
+          <fa-icon
+            [icon]="faRetweet"
+            style="font-size: 17px; color: #707070"
+          ></fa-icon
+        ></span>
+      </p>
+      <p class="para" *ngIf="item.share_text">{{ item.share_text }}</p>
+    </div>
+    <div class="col-md-2 px-2" *ngIf="vestLogin">
+      <img
+        src="assets/img/dot.png"
+        class="d-block ms-auto"
+        width="15px"
+        *ngIf="item.user?.user_uid == this.vestLogin.user_uid"
+        id="click-trigger{{ index }}"
+        (click)="
+          goDetailsPost(item.post_uid, item?.user.user_uid, 'setopen', $event)
+        "
+      />
+      <ion-popover
+        style="--width: 140px !important"
+        keep-contents-mounted="true"
+        #popover
+        [isOpen]="isOpen"
+        (didDismiss)="isOpen = false"
+        *ngIf="item.user?.user_uid == this.vestLogin.user_uid"
+      >
+        <ng-template>
+          <ion-content class="padding-0">
+            <ion-button
+              *ngIf="item.action == 'added'"
+              (click)="
+                setOpen(true, item.post_uid, item.text, item.privacy, $event)
+              "
+              style="float: left"
+              expand="block"
+              fill="clear"
+              shape="round"
+            >
+              <ion-icon name="create-outline"></ion-icon> &nbsp; Edit
+            </ion-button>
+            <ion-button
+              *ngIf="item.action == 'added'"
+              style="float: left"
+              (click)="presentAlert(item.post_uid, index, $event)"
+              expand="block"
+              fill="clear"
+              shape="round"
+              color="danger"
+            >
+              <ion-icon name="trash-outline"></ion-icon> Remove
+            </ion-button>
+            <ion-button
+              *ngIf="item.action == 'shared'"
+              (click)="openShareModal2(item, $event)"
+              style="float: left"
+              expand="block"
+              fill="clear"
+              shape="round"
+            >
+              <ion-icon name="create-outline"></ion-icon> &nbsp; Edit
+            </ion-button>
+            <ion-button
+              *ngIf="item.action == 'shared'"
+              style="float: left"
+              (click)="presentAlert2(item.post_uid, index)"
+              expand="block"
+              fill="clear"
+              shape="round"
+              color="danger"
+            >
+              <ion-icon name="trash-outline"></ion-icon> Remove
+            </ion-button>
+          </ion-content>
+        </ng-template>
+      </ion-popover>
+    </div>
+  </div>
+  <div class="row pb-2" *ngIf="item.action == 'shared'">
+    <div class="col-md-1"></div>
+    <div class="col-md-11 px-4">
+      <div class="row p-3 g-border">
+        <div class="col-md-1 text-center">
+          <img
+            style="border-radius: 50%"
+            *ngIf="item.shared_user?.profile_image"
+            src="{{ profile_image_path }}/{{ item.shared_user?.profile_image }}"
+            width="50px"
+          />
+          <img
+            style="border-radius: 50%"
+            *ngIf="!item.shared_user?.profile_image"
+            src="assets/icon/dark.png"
+            width="50px"
+          />
+        </div>
+        <div class="col-md-11 px-3" style="cursor: pointer">
+          <p class="name">
+            <b routerLink="/app/profile/{{ item?.shared_user.user_uid }}"
+              >{{ item.shared_user?.fname | titlecase }}
+              {{ item.shared_user?.lname | titlecase }}</b
+            >&nbsp;
+            <span
+              >@{{ item.shared_user?.username | titlecase }} .
+              {{ getNowDate(item.modified_date) | timeAgo }}</span
+            >
+          </p>
+          <p
+            (click)="
+              goDetailsPost(
+                item.share_post_uid,
+                item?.user.user_uid,
+                'post',
+                $event
+              )
+            "
+            class="para"
+            [innerHTML]="item.text"
+          ></p>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-2" (click)="postDetailsChild(item.post_uid, index)">
+              <img src="assets/img/comments.svg" width="15px" /><span
+                class="sm-font ms-3"
+                >{{ item.total_comments }}</span
+              >
+            </div>
+            <div class="col-2" (click)="openShareModal(item)">
+              <img src="assets/img/likes.png" width="15px" /><span
+                class="sm-font ms-3"
+                >{{ item.total_shares }}</span
+              >
+            </div>
+            <div
+              class="col-3"
+              style="display: flex; align-items: center; margin-top: -5px"
+            >
+              <ion-button
+                *ngIf="
+                  item.post_votes.length > 0 &&
+                  item.post_votes[0].vote_type == 1
+                "
+                fill="clear"
+                color="success"
+                style="font-size: 17px"
+                (click)="setVoteChild(item.post_uid, 'up', item, index, 'demo')"
+              >
+                <fa-icon [icon]="faArrowUp" style="font-size: 17px"></fa-icon>
+              </ion-button>
+              <ion-button
+                *ngIf="
+                  item.post_votes.length > 0 &&
+                  item.post_votes[0].vote_type != 1
+                "
+                fill="clear"
+                color="danger"
+                style="font-size: 17px; --ion-color-danger: lightgray"
+                (click)="setVoteChild(item.post_uid, 'up', item, index, 'up')"
+              >
+                <fa-icon [icon]="faArrowUp" style="font-size: 17px"></fa-icon>
+              </ion-button>
+
+              <ion-text
+                *ngIf="readmore"
+                style="
+                  font-size: 17px;
+                  --ion-color-danger: lightgray;
+                  color: #b3b3b3;
+                "
+              >
+                {{ item.total_up_vote - item.total_down_vote }}
+              </ion-text>
+              <ion-text
+                *ngIf="!readmore"
+                style="
+                  font-size: 17px;
+                  --ion-color-danger: lightgray;
+                  color: #b3b3b3;
+                "
+              >
+                {{ item.total_up_vote }}
+              </ion-text>
+              <ion-button
+                *ngIf="
+                  item.post_votes.length > 0 &&
+                  item.post_votes[0].vote_type == 2
+                "
+                fill="clear"
+                color="danger"
+                style="font-size: 17px"
+                (click)="
+                  setVoteChild(item.post_uid, 'down', item, index, 'demo')
+                "
+              >
+                <fa-icon [icon]="faArrowDown" style="font-size: 17px"></fa-icon>
+              </ion-button>
+              <ion-button
+                *ngIf="
+                  item.post_votes.length > 0 &&
+                  item.post_votes[0].vote_type != 2
+                "
+                fill="clear"
+                color="danger"
+                style="font-size: 17px; --ion-color-danger: lightgray"
+                (click)="
+                  setVoteChild(item.post_uid, 'down', item, index, 'down')
+                "
+              >
+                <fa-icon [icon]="faArrowDown" style="font-size: 17px"></fa-icon>
+              </ion-button>
+              <ion-text
+                *ngIf="!readmore"
+                style="font-size: 17px; --ion-color-danger: lightgray"
+              >
+                {{ item.total_down_vote }}
+              </ion-text>
+            </div>
+            <div class="col-5 text-right">
+              <img src="assets/img/upload.png" width="14px" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- share end -->
+
+  <!-- added start -->
+  <div
+    class="row p-3 pb-1"
+    *ngIf="item.action == 'added'"
+    (click)="goDetailsPost(item.post_uid, item?.user.user_uid, 'post', $event)"
+  >
+    <div class="col-md-1 p-image text-center">
+      <img
+        *ngIf="item.user?.profile_image"
+        src="{{ profile_image_path }}/{{ item.user?.profile_image }}"
+        style="width: 50px"
+      />
+      <img
+        *ngIf="!item.user?.profile_image"
+        src="assets/icon/dark.png"
+        style="width: 50px"
+      />
+    </div>
+    <div class="col-md-11 px-2">
+      <p class="name">
+        <b
+          (click)="
+            goDetailsPost(item.post_uid, item?.user.user_uid, 'profile', $event)
+          "
+          >{{ item.user?.fname | titlecase }}
+          {{ item.user?.lname | titlecase }}</b
+        >&nbsp;
+        <span
+          >@{{ item.user?.username }}.
+          {{ getNowDate(item.modified_date) | timeAgo }}
+          <span *ngIf="item.post_genre && item.post_genre != 'all_post'"
+            >- {{ item.post_genre | titlecase }}
+          </span>
+          <span *ngIf="item.category && item.category != 'No category'"
+            >- {{ item.category }}
+          </span>
+          <span *ngIf="item.tags"
+            >- <b class="feedtags">{{ item.tags }}</b></span
+          >
+          <span
+            *ngIf="item.sentiment && item.sentiment != 'No sentiment'"
+            [ngClass]="{
+              pfeed: item.sentiment == 'Positive',
+              nfeed: item.sentiment == 'Negative',
+              nnfeed: item.sentiment == 'Neutral'
+            }"
+          >
+            - <b>{{ item.sentiment }}</b></span
+          ></span
+        >
+        <span *ngIf="vestLogin">
+          <img
+            src="assets/img/dot.png"
+            class="d-block ms-auto"
+            *ngIf="item.user?.user_uid == this.vestLogin.user_uid"
+            id="click-trigger{{ index }}"
+            (click)="
+              goDetailsPost(
+                item.post_uid,
+                item?.user.user_uid,
+                'setopen',
+                $event
+              )
+            "
+            width="15px"
+          />
+          <ion-popover
+            style="--width: 140px !important"
+            keep-contents-mounted="true"
+            #popover
+            [isOpen]="isOpen"
+            (didDismiss)="isOpen = false"
+            *ngIf="item.user?.user_uid == this.vestLogin.user_uid"
+          >
+            <ng-template>
+              <ion-content class="padding-0">
+                <ion-button
+                  *ngIf="item.action == 'added'"
+                  (click)="
+                    setOpen(
+                      true,
+                      item.post_uid,
+                      item.text,
+                      item.privacy,
+                      $event
+                    )
+                  "
+                  style="float: left"
+                  expand="block"
+                  fill="clear"
+                  shape="round"
+                >
+                  <ion-icon name="create-outline"></ion-icon> &nbsp; Edit
+                </ion-button>
+                <ion-button
+                  *ngIf="item.action == 'added'"
+                  style="float: left"
+                  (click)="presentAlert(item.post_uid, index, $event)"
+                  expand="block"
+                  fill="clear"
+                  shape="round"
+                  color="danger"
+                >
+                  <ion-icon name="trash-outline"></ion-icon> Remove
+                </ion-button>
+                <ion-button
+                  *ngIf="item.action == 'shared'"
+                  (click)="openShareModal2(item, $event)"
+                  style="float: left"
+                  expand="block"
+                  fill="clear"
+                  shape="round"
+                >
+                  <ion-icon name="create-outline"></ion-icon> &nbsp; Edit
+                </ion-button>
+                <ion-button
+                  *ngIf="item.action == 'shared'"
+                  style="float: left"
+                  (click)="presentAlert2(item.post_uid, index)"
+                  expand="block"
+                  fill="clear"
+                  shape="round"
+                  color="danger"
+                >
+                  <ion-icon name="trash-outline"></ion-icon> Remove
+                </ion-button>
+              </ion-content>
+            </ng-template>
+          </ion-popover>
+        </span>
+      </p>
+      <p
+        *ngIf="readmore"
+        [innerHTML]="
+          item.text.length > 1000
+            ? (item.text | slice : 0 : 1000) + '...'
+            : item.text
+        "
+      ></p>
+      <strong *ngIf="readmore">
+        <b
+          class="g-text para mt-3 d-block"
+          style="cursor: pointer"
+          *ngIf="item.text.length > 1000"
+          >Read more</b
+        ></strong
+      >
+      <p *ngIf="!readmore" [innerHTML]="item.text"></p>
+    </div>
+  </div>
+  <div
+    class="row pb-2"
+    [ngClass]="{ 'brd-btm': !readmore }"
+    *ngIf="item.action == 'added'"
+  >
+    <div class="col-md-1"></div>
+    <div class="col-md-11 px-4">
+      <div class="row mt-2">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-2" (click)="postDetailsChild(item.post_uid, index)">
+              <svg
+                width="20"
+                height="18"
+                viewBox="0 0 20 18"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M8.79128 12.7167C9.15447 12.7167 9.4489 12.9945 9.4489 13.337V15.7661C13.0642 13.7742 15.2393 12.3651 16.5511 11.1348C17.3124 10.4208 17.7311 9.81197 17.9743 9.2314C18.2188 8.64763 18.3268 7.99539 18.3268 7.13377C18.3268 4.05039 15.677 1.55082 12.4082 1.55082H7.80484C4.53609 1.55082 1.88624 4.05039 1.88624 7.13377C1.88624 10.2171 4.53609 12.7167 7.80484 12.7167H8.79128ZM9.4489 17.5588C18.2138 12.8007 19.9709 10.8519 19.9709 7.13377C19.9709 3.1939 16.5849 0 12.4082 0H7.80484C3.6281 0 0.242188 3.1939 0.242188 7.13377C0.242188 11.0736 3.6281 14.2675 7.80484 14.2675V17.3799C7.80484 17.8544 8.34667 18.1531 8.78378 17.9181C9.00985 17.7966 9.23153 17.6768 9.4489 17.5588Z"
+                />
+              </svg>
+              <span class="sm-font ms-3">{{ item.total_comments }}</span>
+            </div>
+            <div class="col-2">
+              <ion-button
+                fill="clear"
+                color="success"
+                style="--ion-color-success: #b3b3b3; margin-top: -12px"
+                (click)="openShareModal(item)"
+              >
+                <fa-icon
+                  [icon]="faRetweet"
+                  style="font-size: 17px; color: #b3b3b3"
+                ></fa-icon>
+                &nbsp;
+                <p style="color: #b3b3b3">
+                  &nbsp; &nbsp; {{ item.total_shares }}
+                </p>
+              </ion-button>
+            </div>
+            <div
+              class="col-3"
+              style="display: flex; align-items: center; margin-top: -5px"
+            >
+              <ion-button
+                *ngIf="
+                  item.post_votes.length > 0 &&
+                  item.post_votes[0].vote_type == 1
+                "
+                fill="clear"
+                color="success"
+                style="font-size: 17px"
+                (click)="setVoteChild(item.post_uid, 'up', item, index, 'demo')"
+              >
+                <fa-icon [icon]="faArrowUp" style="font-size: 17px"></fa-icon>
+              </ion-button>
+              <ion-button
+                *ngIf="
+                  item.post_votes.length > 0 &&
+                  item.post_votes[0].vote_type != 1
+                "
+                fill="clear"
+                color="danger"
+                style="font-size: 17px; --ion-color-danger: lightgray"
+                (click)="setVoteChild(item.post_uid, 'up', item, index, 'up')"
+              >
+                <fa-icon [icon]="faArrowUp" style="font-size: 17px"></fa-icon>
+              </ion-button>
+
+              <ion-text
+                *ngIf="readmore"
+                style="
+                  font-size: 17px;
+                  --ion-color-danger: lightgray;
+                  color: #b3b3b3;
+                "
+              >
+                {{ item.total_up_vote - item.total_down_vote }}
+              </ion-text>
+              <ion-text
+                *ngIf="!readmore"
+                style="
+                  font-size: 17px;
+                  --ion-color-danger: lightgray;
+                  color: #b3b3b3;
+                "
+              >
+                {{ item.total_up_vote }}
+              </ion-text>
+              <ion-button
+                *ngIf="
+                  item.post_votes.length > 0 &&
+                  item.post_votes[0].vote_type == 2
+                "
+                fill="clear"
+                color="danger"
+                style="font-size: 17px"
+                (click)="
+                  setVoteChild(item.post_uid, 'down', item, index, 'demo')
+                "
+              >
+                <fa-icon [icon]="faArrowDown" style="font-size: 17px"></fa-icon>
+              </ion-button>
+              <ion-button
+                *ngIf="
+                  item.post_votes.length > 0 &&
+                  item.post_votes[0].vote_type != 2
+                "
+                fill="clear"
+                color="danger"
+                style="font-size: 17px; --ion-color-danger: lightgray"
+                (click)="
+                  setVoteChild(item.post_uid, 'down', item, index, 'down')
+                "
+              >
+                <fa-icon [icon]="faArrowDown" style="font-size: 17px"></fa-icon>
+              </ion-button>
+              <ion-text
+                *ngIf="!readmore"
+                style="font-size: 17px; --ion-color-danger: lightgray"
+              >
+                {{ item.total_down_vote }}
+              </ion-text>
+              <!-- <span
+                class="sv-icons"
+                (click)="setVoteChild(item.post_uid, 'up', item, index, 'demo')"
+              >
+                <svg
+                  width="12"
+                  height="17"
+                  viewBox="0 0 12 17"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M6.14947 0.53217C5.85658 0.239277 5.3817 0.239277 5.08881 0.53217L0.31584 5.30514C0.0229464 5.59803 0.0229464 6.07291 0.31584 6.3658C0.608733 6.65869 1.08361 6.65869 1.3765 6.3658L5.61914 2.12316L9.86178 6.3658C10.1547 6.65869 10.6295 6.65869 10.9224 6.3658C11.2153 6.07291 11.2153 5.59803 10.9224 5.30514L6.14947 0.53217ZM6.36914 16.0625L6.36914 1.0625H4.86914L4.86914 16.0625H6.36914Z"
+                  />
+                </svg>
+              </span>
+
+              <span class="sm-font mx-3" *ngIf="readmore">{{
+                item.total_up_vote - item.total_down_vote
+              }}</span>
+              <span class="sm-font mx-3" *ngIf="!readmore">{{
+                item.total_up_vote
+              }}</span>
+              <span
+                class="sv-icons"
+                (click)="
+                  setVoteChild(item.post_uid, 'down', item, index, 'down')
+                "
+              >
+                <svg
+                  width="12"
+                  height="16"
+                  viewBox="0 0 12 16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M5.53998 15.5303C5.83287 15.8232 6.30775 15.8232 6.60064 15.5303L11.3736 10.7574C11.6665 10.4645 11.6665 9.98959 11.3736 9.6967C11.0807 9.40381 10.6058 9.40381 10.313 9.6967L6.07031 13.9393L1.82767 9.6967C1.53478 9.4038 1.0599 9.4038 0.767011 9.6967C0.474118 9.98959 0.474118 10.4645 0.767011 10.7574L5.53998 15.5303ZM5.32031 -1.47668e-07L5.32031 15L6.82031 15L6.82031 1.47668e-07L5.32031 -1.47668e-07Z"
+                  />
+                </svg>
+              </span> -->
+            </div>
+            <div class="col-4 text-right upload-icon" *ngIf="!readmore">
+              <span>{{ getNowDate(item.modified_date) | timeAgo }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- added end -->
+  <ion-row *ngIf="item.isMessage" style="padding: 15px">
+    <ion-col size="1" class="ion-hide-lg-down"></ion-col>
+    <ion-col sizeLg="8" size="12">
+      <ion-item fill="outline">
+        <!-- <ion-label position="floating">Write a comment...</ion-label> -->
+        <ion-textarea
+          [(ngModel)]="item.message"
+          [autofocus]="item.isMessage"
+          placeholder="Write a comment..."
+        ></ion-textarea>
+      </ion-item>
+    </ion-col>
+    <ion-col sizeLg="3" size="12">
+      <ion-button
+        class="ion-hide-sm-down"
+        style="margin-top: 20px; margin-left: 10px"
+        (click)="sendMessage(item, index)"
+        [disabled]="!item.message"
+        color="success"
+        shape="round"
+      >
+        Send
+      </ion-button>
+      <ion-button
+        class="ion-hide-sm-up"
+        style="margin-left: 10px"
+        (click)="sendMessage(item, index)"
+        [disabled]="!item.message"
+        color="success"
+        shape="round"
+      >
+        Send
+      </ion-button>
+    </ion-col>
+  </ion-row>
+  <ion-row *ngIf="postDetailsData?.comments.length > 0 && item.isMessage">
+    <ion-col size="1" class="ion-hide-lg-down"></ion-col>
+    <ion-col size="12" sizeLg="11">
+      <ion-list
+        lines="full"
+        style="background: transparent; padding-bottom: 0"
+        *ngFor="let post of postDetailsData?.comments; let j = index"
+      >
+        <span>
+          <ion-item class="dark-cmt" style="margin-bottom: -3px">
+            <ion-avatar slot="start" style="position: absolute; top: 0">
+              <img
+                loading="lazy"
+                *ngIf="!post.user?.profile_image"
+                alt="logo{{ j }}"
+                style="height: 40px; width: 40px"
+                src="assets/icon/dark.png"
+              />
+              <img
+                loading="lazy"
+                routerLink="/app/profile/{{ post?.user.user_uid }}"
+                *ngIf="post.user?.profile_image"
+                style="height: 40px; width: 40px"
+                alt="logo{{ j }}"
+                src="{{ profile_image_path }}/{{ post.user?.profile_image }}"
+              />
+            </ion-avatar>
+            <ion-label class="ion-text-wrap" style="margin-left: 55px">
+              <p class="s" routerLink="/app/profile/{{ post?.user.user_uid }}">
+                {{ post.user?.fname | titlecase }}
+                {{ post.user?.lname | titlecase }}
+                {{ getNowDate(post.added_date) | timeAgo }}
+              </p>
+              <p *ngIf="!post.isMessage" class="s">
+                {{ post.text }}
+              </p>
+              <p style="display: flex; align-items: center">
+                <ion-button
+                  fill="clear"
+                  color="danger"
+                  style="font-size: 17px; --ion-color-danger: lightgray"
+                  (click)="userCommentVote(post, j, 'up')"
+                >
+                  <fa-icon [icon]="faArrowUp" style="font-size: 17px"></fa-icon>
+                </ion-button>
+
+                <ion-text
+                  style="font-size: 17px; --ion-color-danger: lightgray"
+                >
+                  {{ post.total_up_vote - post.total_down_vote }}
+                </ion-text>
+                <ion-button
+                  (click)="userCommentVote(post, j, 'down')"
+                  fill="clear"
+                  color="danger"
+                  style="font-size: 17px; --ion-color-danger: lightgray"
+                >
+                  <fa-icon
+                    [icon]="faArrowDown"
+                    style="font-size: 17px"
+                  ></fa-icon>
+                </ion-button>
+                &nbsp;
+                <ion-button
+                  style="--ion-color-success: lightgray"
+                  [ngStyle]="{
+                    '--ion-color-success': post.isNewMessage ? '' : 'lightgray'
+                  }"
+                  fill="clear"
+                  color="success"
+                  (click)="setNewCommentOpen(post)"
+                >
+                  <fa-icon [icon]="faComment" style="font-size: 21px"></fa-icon>
+                  &nbsp; {{ post.child_comments.length }}
+                </ion-button>
+              </p>
+            </ion-label>
+            <ion-icon
+              slot="end"
+              *ngIf="post.user?.user_uid == this.vestLogin?.user_uid"
+              style="cursor: pointer; position: absolute; top: 0; right: 0"
+              id="q{{ post.comment_uid }}"
+              name="ellipsis-horizontal"
+            ></ion-icon>
+            <ion-popover
+              trigger="q{{ post.comment_uid }}"
+              triggerAction="click"
+              *ngIf="post.user?.user_uid == this.vestLogin?.user_uid"
+            >
+              <ng-template>
+                <ion-content class="ion-padding">
+                  <ion-button
+                    (click)="setCommentOpen(post)"
+                    style="float: left"
+                    expand="block"
+                    fill="clear"
+                    shape="round"
+                  >
+                    <ion-icon name="create-outline"></ion-icon>
+                    &nbsp; Edit
+                  </ion-button>
+                  <ion-button
+                    style="float: left"
+                    (click)="
+                      removeRootComment(
+                        postDetailsData?.post.post_uid,
+                        post.comment_uid,
+                        postDetailsData?.comments,
+                        j
+                      )
+                    "
+                    expand="block"
+                    fill="clear"
+                    shape="round"
+                    color="danger"
+                  >
+                    <ion-icon name="trash-outline"></ion-icon>
+                    &nbsp; Remove
+                  </ion-button>
+                </ion-content>
+              </ng-template>
+            </ion-popover>
+          </ion-item>
+          <!-- // edit comment section start -->
+          <ion-row>
+            <ion-col size="12" sizeSm="10">
+              <ion-item
+                lines="full"
+                fill="outline"
+                style="padding: 10px; margin-top: 10px"
+                *ngIf="post.isMessage"
+              >
+                <!-- <ion-label position="floating">Write a comment...</ion-label> -->
+                <ion-textarea
+                  [autofocus]="post.text"
+                  [(ngModel)]="post.text"
+                  placeholder="Write a comment..."
+                ></ion-textarea>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" sizeSm="2">
+              <ion-button
+                *ngIf="post.isMessage"
+                (click)="editMessage(post, j, postDetailsData?.post.post_uid)"
+                [disabled]="!post.text"
+                color="success"
+                shape="round"
+                style="margin-top: 35px"
+                size="default"
+              >
+                Edit
+              </ion-button>
+            </ion-col>
+          </ion-row>
+
+          <!-- // edit comment section end // edit comment section start -->
+          <ion-row>
+            <ion-col sizeSm="10" size="12">
+              <ion-item
+                lines="full"
+                fill="outline"
+                style="padding: 10px; margin-top: 10px"
+                *ngIf="post.isNewMessage"
+              >
+                <!-- <ion-label position="floating">Write a comment...</ion-label> -->
+                <ion-textarea
+                  [(ngModel)]="post.message"
+                  placeholder="Write a comment..."
+                ></ion-textarea>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" sizeSm="2">
+              <ion-button
+                *ngIf="post.isNewMessage"
+                (click)="
+                  sendEditMessage(post, j, postDetailsData?.post.post_uid)
+                "
+                [disabled]="!post.message"
+                color="success"
+                style="margin-top: 35px"
+                shape="round"
+                size="default"
+              >
+                Send
+              </ion-button>
+            </ion-col>
+          </ion-row>
+
+          <!-- // edit comment section end // child comment section start -->
+          <span *ngIf="post.isNewMessage">
+            <div
+              *ngFor="let subpost of post?.child_comments; let k = index"
+              style="padding: 15px"
+            >
+              <span *ngIf="k < 3">
+                <ion-item>
+                  <ion-avatar slot="start" style="position: absolute; top: 0">
+                    <img
+                      loading="lazy"
+                      *ngIf="!subpost.user?.profile_image"
+                      alt="logo{{ j }}"
+                      style="height: 40px; width: 40px"
+                      src="assets/icon/dark.png"
+                    />
+                    <img
+                      loading="lazy"
+                      routerLink="/app/profile/{{ subpost?.user.user_uid }}"
+                      *ngIf="subpost.user?.profile_image"
+                      style="height: 40px; width: 40px"
+                      alt="logo{{ j }}"
+                      src="{{ profile_image_path }}/{{
+                        subpost.user?.profile_image
+                      }}"
+                    />
+                  </ion-avatar>
+                  <ion-label class="ion-text-wrap" style="margin-left: 55px">
+                    <p
+                      class="s"
+                      routerLink="/app/profile/{{ subpost?.user.user_uid }}"
+                      style="cursor: pointer"
+                    >
+                      {{ subpost.user?.fname | titlecase }}
+                      {{ subpost.user?.lname | titlecase }}
+                      {{ getNowDate(subpost.added_date) | timeAgo }}
+                    </p>
+                    <p *ngIf="!subpost.isMessage">
+                      {{ subpost.text }}
+                    </p>
+                    <p
+                      *ngIf="!subpost.isMessage"
+                      style="display: flex; align-items: center"
+                    >
+                      <ion-button
+                        fill="clear"
+                        color="danger"
+                        style="font-size: 17px; --ion-color-danger: lightgray"
+                        (click)="userCommentVote(subpost, j, 'up')"
+                      >
+                        <fa-icon
+                          [icon]="faArrowUp"
+                          style="font-size: 17px"
+                        ></fa-icon>
+                      </ion-button>
+
+                      <ion-text
+                        style="font-size: 17px; --ion-color-danger: lightgray"
+                      >
+                        {{ subpost.total_up_vote - subpost.total_down_vote }}
+                      </ion-text>
+                      <ion-button
+                        (click)="userCommentVote(subpost, j, 'down')"
+                        fill="clear"
+                        color="danger"
+                        style="font-size: 17px; --ion-color-danger: lightgray"
+                      >
+                        <fa-icon
+                          [icon]="faArrowDown"
+                          style="font-size: 17px"
+                        ></fa-icon>
+                      </ion-button>
+                      &nbsp;
+                      <ion-button
+                        style="--ion-color-success: lightgray"
+                        [ngStyle]="{
+                          '--ion-color-success': subpost.isNewMessage
+                            ? ''
+                            : 'lightgray'
+                        }"
+                        fill="clear"
+                        color="success"
+                        (click)="setNewCommentOpen(subpost)"
+                      >
+                        <fa-icon
+                          [icon]="faComment"
+                          style="font-size: 21px"
+                        ></fa-icon>
+                        &nbsp;
+                        <span *ngIf="subpost?.comments">{{
+                          subpost?.comments.length
+                        }}</span>
+                      </ion-button>
+                    </p>
+                  </ion-label>
+                  <ion-icon
+                    slot="end"
+                    *ngIf="subpost.user?.user_uid == this.vestLogin?.user_uid"
+                    style="cursor: pointer"
+                    id="qq{{ subpost.comment_uid }}"
+                    name="ellipsis-horizontal-outline"
+                  ></ion-icon>
+                  <ion-popover
+                    trigger="qq{{ subpost.comment_uid }}"
+                    triggerAction="click"
+                    *ngIf="subpost.user?.user_uid == this.vestLogin?.user_uid"
+                  >
+                    <ng-template>
+                      <ion-content class="ion-padding">
+                        <ion-button
+                          (click)="setCommentOpen(subpost)"
+                          style="float: left"
+                          expand="block"
+                          fill="clear"
+                          shape="round"
+                        >
+                          <ion-icon name="create-outline"></ion-icon>
+                          &nbsp; Edit
+                        </ion-button>
+                        <ion-button
+                          style="float: left"
+                          (click)="
+                            removeRootComment(
+                              postDetailsData?.post.post_uid,
+                              subpost.comment_uid,
+                              post?.child_comments,
+                              k
+                            )
+                          "
+                          expand="block"
+                          fill="clear"
+                          shape="round"
+                          color="danger"
+                        >
+                          <ion-icon name="trash-outline"></ion-icon>
+                          &nbsp; Remove
+                        </ion-button>
+                      </ion-content>
+                    </ng-template>
+                  </ion-popover>
+                </ion-item>
+                <ion-row>
+                  <ion-col size="12" sizeSm="10">
+                    <ion-item
+                      lines="full"
+                      fill="outline"
+                      style="padding: 10px; margin-top: 10px"
+                      *ngIf="subpost.isMessage"
+                    >
+                      <!-- <ion-label position="floating"
+                        >Write a comment...</ion-label
+                      > -->
+                      <ion-textarea
+                        [(ngModel)]="subpost.text"
+                        placeholder="Write a comment..."
+                      ></ion-textarea>
+                    </ion-item>
+                  </ion-col>
+                  <ion-col size="12" sizeSm="2">
+                    <ion-button
+                      *ngIf="subpost.isMessage"
+                      [disabled]="!post.text"
+                      (click)="
+                        editMessage(subpost, k, postDetailsData?.post.post_uid)
+                      "
+                      color="success"
+                      style="margin-top: 35px"
+                      shape="round"
+                      size="default"
+                    >
+                      Edit
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+              </span>
+              <ion-row *ngIf="subpost.isNewMessage">
+                <ion-col sizeSm="10" size="12">
+                  <ion-item
+                    lines="full"
+                    fill="outline"
+                    style="padding: 10px; margin-top: 10px"
+                    *ngIf="subpost.isNewMessage"
+                  >
+                    <!-- <ion-label position="floating"
+                      >Write a comment...</ion-label
+                    > -->
+                    <ion-textarea
+                      [(ngModel)]="subpost.message"
+                      placeholder="Write a comment..."
+                    ></ion-textarea>
+                  </ion-item>
+                </ion-col>
+                <ion-col size="12" sizeSm="2">
+                  <ion-button
+                    *ngIf="post.isNewMessage"
+                    (click)="
+                      sendEditMessage(
+                        subpost,
+                        k,
+                        postDetailsData?.post.post_uid
+                      )
+                    "
+                    [disabled]="!subpost.message"
+                    color="success"
+                    style="margin-top: 35px"
+                    shape="round"
+                    size="default"
+                  >
+                    Send
+                  </ion-button>
+                </ion-col>
+              </ion-row>
+              <span *ngIf="subpost.isNewMessage">
+                <div
+                  *ngFor="let subpost2 of subpost?.comments; let l = index"
+                  style="padding: 15px"
+                >
+                  <span>
+                    <ion-item>
+                      <ion-avatar
+                        slot="start"
+                        style="position: absolute; top: 0"
+                      >
+                        <img
+                          loading="lazy"
+                          *ngIf="!subpost2.user?.profile_image"
+                          alt="logo{{ j }}"
+                          style="height: 40px; width: 40px"
+                          src="assets/icon/dark.png"
+                        />
+                        <img
+                          loading="lazy"
+                          routerLink="/app/profile/{{
+                            subpost2?.user.user_uid
+                          }}"
+                          *ngIf="subpost2.user?.profile_image"
+                          style="height: 40px; width: 40px"
+                          alt="logo{{ j }}"
+                          src="{{ profile_image_path }}/{{
+                            subpost2.user?.profile_image
+                          }}"
+                        />
+                      </ion-avatar>
+                      <ion-label
+                        class="ion-text-wrap"
+                        style="margin-left: 55px"
+                      >
+                        <p
+                          class="s"
+                          routerLink="/app/profile/{{
+                            subpost2?.user.user_uid
+                          }}"
+                          style="cursor: pointer"
+                        >
+                          {{ subpost2.user?.fname | titlecase }}
+                          {{ subpost2.user?.lname | titlecase }}
+                          {{ getNowDate(subpost2.added_date) | timeAgo }}
+                        </p>
+                        <p *ngIf="!subpost2.isMessage">
+                          {{ subpost2.text }}
+                        </p>
+                        <p
+                          *ngIf="!subpost2.isMessage"
+                          style="display: flex; align-items: center"
+                        >
+                          <ion-button
+                            fill="clear"
+                            color="danger"
+                            style="
+                              font-size: 17px;
+                              --ion-color-danger: lightgray;
+                            "
+                            (click)="userCommentVote(subpost2, l, 'up')"
+                          >
+                            <fa-icon
+                              [icon]="faArrowUp"
+                              style="font-size: 17px"
+                            ></fa-icon>
+                          </ion-button>
+
+                          <ion-text
+                            style="
+                              font-size: 17px;
+                              --ion-color-danger: lightgray;
+                            "
+                          >
+                            {{
+                              subpost2.total_up_vote - subpost2.total_down_vote
+                            }}
+                          </ion-text>
+                          <ion-button
+                            (click)="userCommentVote(subpost2, l, 'down')"
+                            fill="clear"
+                            color="danger"
+                            style="
+                              font-size: 17px;
+                              --ion-color-danger: lightgray;
+                            "
+                          >
+                            <fa-icon
+                              [icon]="faArrowDown"
+                              style="font-size: 17px"
+                            ></fa-icon>
+                          </ion-button>
+                        </p>
+                      </ion-label>
+                      <ion-icon
+                        slot="end"
+                        *ngIf="
+                          subpost2.user?.user_uid == this.vestLogin?.user_uid
+                        "
+                        style="cursor: pointer"
+                        id="{{ subpost2.comment_uid }}"
+                        name="ellipsis-horizontal-outline"
+                      ></ion-icon>
+                      <ion-popover
+                        trigger="{{ subpost2.comment_uid }}"
+                        triggerAction="click"
+                        *ngIf="
+                          subpost.user?.user_uid == this.vestLogin?.user_uid
+                        "
+                      >
+                        <ng-template>
+                          <ion-content class="ion-padding">
+                            <ion-button
+                              (click)="setCommentOpen(subpost2)"
+                              style="float: left"
+                              expand="block"
+                              fill="clear"
+                              shape="round"
+                            >
+                              <ion-icon name="create-outline"></ion-icon>
+                              &nbsp; Edit
+                            </ion-button>
+                            <ion-button
+                              style="float: left"
+                              (click)="
+                                removeRootComment(
+                                  postDetailsData?.post.post_uid,
+                                  subpost2.comment_uid,
+                                  subpost?.comments,
+                                  l
+                                )
+                              "
+                              expand="block"
+                              fill="clear"
+                              shape="round"
+                              color="danger"
+                            >
+                              <ion-icon name="trash-outline"></ion-icon>
+                              &nbsp; Remove
+                            </ion-button>
+                          </ion-content>
+                        </ng-template>
+                      </ion-popover>
+                    </ion-item>
+                    <ion-row>
+                      <ion-col size="12" sizeSm="10">
+                        <ion-item
+                          lines="full"
+                          fill="outline"
+                          style="padding: 10px; margin-top: 10px"
+                          *ngIf="subpost2.isMessage"
+                        >
+                          <!-- <ion-label position="floating"
+                            >Write a comment...</ion-label
+                          > -->
+                          <ion-textarea
+                            [(ngModel)]="subpost2.text"
+                            placeholder="Write a comment..."
+                          ></ion-textarea>
+                        </ion-item>
+                      </ion-col>
+                      <ion-col size="12" sizeSm="2">
+                        <ion-button
+                          *ngIf="subpost2.isMessage"
+                          [disabled]="!subpost.text"
+                          (click)="
+                            editMessage(
+                              subpost2,
+                              l,
+                              postDetailsData?.post.post_uid
+                            )
+                          "
+                          color="success"
+                          style="margin-top: 35px"
+                          shape="round"
+                          size="default"
+                        >
+                          Edit
+                        </ion-button>
+                      </ion-col>
+                    </ion-row>
+                  </span>
+                </div>
+              </span>
+            </div>
+          </span>
+
+          <!-- // child comment section end -->
+        </span>
+        <span *ngIf="j == 5 && readmore == true">
+          <ion-item style="--background: transparent">
+            <ion-label
+              routerLink="/app/post-detail/{{ postDetailsData?.post.post_uid }}"
+              color="success"
+              style="cursor: pointer; margin-left: 58px"
+              >see all</ion-label
+            >
+          </ion-item>
+        </span>
+      </ion-list>
+    </ion-col>
+  </ion-row>
+</div>
+
+<ion-modal [isOpen]="isModalOpen" (willDismiss)="onWillDismiss()">
+  <ng-template>
+    <ion-content class="ion-padding">
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12">
+            <ion-buttons>
+              <ion-button (click)="cancel()">X</ion-button>
+            </ion-buttons>
+          </ion-col>
+          <ion-col size="12">
+            <!-- <angular-editor
+              [(ngModel)]="htmlContent"
+              [config]="config"
+            ></angular-editor> -->
+            <quill-editor
+              trackChanges="all"
+              (onEditorCreated)="setFocus($event, editor)"
+              [(ngModel)]="htmlContent"
+              style="
+                height: 430px;
+                display: flex;
+                flex-direction: column-reverse;
+              "
+              customToolbarPosition="bottom"
+            >
+              <div
+                quill-editor-toolbar
+                style="position: absolute; width: 100%; border: none"
+              >
+                <span class="ql-formats">
+                  <button class="ql-bold"></button>
+                  <button class="ql-italic"></button>
+                  <button class="ql-underline"></button>
+                </span>
+                <span class="ql-formats">
+                  <select class="ql-size" title="Size">
+                    <option value="huge">Headline</option>
+                    <option value="large">Body</option>
+                    <option value="small">Caption</option>
+                  </select>
+                </span>
+                <span class="ql-formats">
+                  <button class="ql-image" [title]="'Image'"></button>
+                </span>
+                <span class="ql-formats">
+                  <select class="ql-color"></select>
+                </span>
+                <span class="ql-formats">
+                  <button class="ql-list" value="ordered"></button>
+                </span>
+                <span class="ql-formats">
+                  <button class="ql-link"></button>
+                </span>
+                <ion-button
+                  id="{{ item?.post_uid }}picker"
+                  style="margin-top: -5px"
+                  fill="clear"
+                  color="success"
+                >
+                  <ion-icon icon="calendar"></ion-icon>
+                </ion-button>
+                <ion-popover
+                  trigger="{{ item?.post_uid }}picker"
+                  triggerAction="click"
+                  show-backdrop="false"
+                  side="top"
+                  alignment="center-number"
+                >
+                  <ng-template>
+                    <ion-datetime
+                      [min]="minDate"
+                      [max]="maxDate"
+                      #popoverDatetime
+                      presentation="date-time"
+                      showDefaultButtons="true"
+                      locale="en-GB"
+                      hourCycle="h12"
+                      (ionChange)="formatDate(popoverDatetime.value)"
+                    ></ion-datetime>
+                  </ng-template>
+                </ion-popover>
+                <ion-button
+                  style="margin-top: -5px"
+                  [ngStyle]="{ color: privacy == 'public' ? '#1DCF5B' : '' }"
+                  (click)="setOpenprivacy(false, 'public')"
+                  [color]="privacy"
+                  fill="clear"
+                  shape="round"
+                >
+                  Public
+                </ion-button>
+                <!-- <ion-button
+                  fill="clear"
+                  color="dark"
+                  style="cursor: pointer; margin-top: -5px"
+                  >Attach
+                  <input
+                    type="file"
+                    id="myFileInput"
+                    (change)="uploadFile($event)"
+                  />
+                </ion-button> -->
+                <ion-button
+                  style="margin-top: -5px"
+                  fill="solid"
+                  color="success"
+                  shape="round"
+                  (click)="onsubmit('live')"
+                  [disabled]="isFileUpload || isPosted"
+                >
+                  Edit
+                </ion-button>
+                <ion-button
+                  style="margin-top: -5px"
+                  fill="solid"
+                  color="success"
+                  shape="round"
+                  (click)="onsubmit('draft')"
+                  [disabled]="isFileUpload || isPosted"
+                >
+                  Save as draft
+                </ion-button>
+              </div>
+            </quill-editor>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-content>
+    <!-- <ion-footer style="z-index: -1">
+      <ion-toolbar style="--background: transparent">
+        <ion-buttons slot="end">
+          <ion-button
+            [ngStyle]="{ color: privacy == 'public' ? '#1DCF5B' : '' }"
+            style="
+              display: inline-block;
+              font-family: 'SF Pro Display';
+              font-style: normal;
+              font-weight: 600;
+              font-size: 17px;
+              line-height: 28px;
+              /* or 175% */
+
+              display: flex;
+              align-items: center;
+              text-align: center;
+              letter-spacing: -0.001em;
+            "
+            (click)="setOpenprivacy(false, 'public')"
+            expand="block"
+            [color]="privacy"
+            fill="clear"
+            shape="round"
+          >
+            Public
+          </ion-button>
+           <ion-button
+            [ngStyle]="{ color: privacy == 'private' ? '#1DCF5B' : '' }"
+            style="
+              display: inline-block;
+              font-family: 'SF Pro Display';
+              font-style: normal;
+              font-weight: 600;
+              font-size: 17px;
+              line-height: 28px;
+              /* or 175% */
+
+              display: flex;
+              align-items: center;
+              text-align: center;
+              letter-spacing: -0.001em;
+            "
+            (click)="setOpenprivacy(false, 'private')"
+            expand="block"
+            fill="clear"
+            shape="round"
+          >
+            Private
+          </ion-button>
+        </ion-buttons>
+        <ion-buttons slot="end">
+          <ion-button
+            style="
+              display: inline-block;
+              font-family: 'SF Pro Display';
+              font-style: normal;
+              font-weight: 600;
+              font-size: 17px;
+              line-height: 28px;
+              /* or 175% */
+
+              display: flex;
+              align-items: center;
+              text-align: center;
+              letter-spacing: -0.001em;
+            "
+            >Attach
+            <input type="file" id="myFileInput" (change)="uploadFile($event)" />
+          </ion-button>
+        </ion-buttons>
+        <ion-buttons slot="end">
+          <ion-button></ion-button>
+        </ion-buttons>
+        <ion-buttons slot="end" style="margin-right: 15px">
+          <ion-button
+            (click)="onsubmit()"
+            [disabled]="isFileUpload || isPosted"
+            fill="solid"
+            color="success"
+            style="
+              font-family: 'SF Pro Display';
+              font-style: normal;
+              font-weight: 500;
+              font-size: 17px;
+              line-height: 28px;
+              /* or 175% */
+
+              display: flex;
+              align-items: center;
+              text-align: center;
+              letter-spacing: -0.001em;
+            "
+            shape="round"
+            >Edit</ion-button
+          >
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-footer> -->
+  </ng-template>
+</ion-modal>
+
+<ion-modal [isOpen]="isModalOpen2" (willDismiss)="onWillDismiss2()">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar style="--background: transparent">
+        <ion-buttons slot="start">
+          <ion-button color="danger" (click)="onWillDismiss2()">X</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <ion-item fill="outline">
+        <!-- <ion-label position="floating">Enter message</ion-label> -->
+        <ion-textarea
+          [(ngModel)]="share_text"
+          placeholder="Enter message"
+        ></ion-textarea>
+      </ion-item>
+      <ion-text>
+        <div
+          style="text-align: justify; margin-bottom: 10px; padding: 15px"
+          [innerHTML]="sharePostDetails.text"
+        ></div>
+      </ion-text>
+      <div *ngFor="let file of sharePostDetails.files; let i = index">
+        <div *ngIf="file.type == 'image'">
+          <img
+            loading="lazy"
+            style="height: 240px"
+            src="{{ file_path }}{{ file.type }}s/{{ file.filename }}"
+            alt="file"
+          />
+        </div>
+        <div *ngIf="file.type == 'video'">
+          <video
+            src="{{ file_path }}{{ file.type }}s/{{ file.filename }}"
+            width="300"
+            height="200"
+            controls
+          ></video>
+        </div>
+        <div *ngIf="file.type == 'audio'">
+          <video
+            src="{{ file_path }}{{ file.type }}s/{{ file.filename }}"
+            width="300"
+            height="60"
+            controls
+          ></video>
+        </div>
+      </div>
+    </ion-content>
+    <ion-footer style="position: absolute; bottom: 0">
+      <ion-toolbar style="--background: transparent">
+        <ion-buttons slot="end" style="margin-right: 15px">
+          <ion-button
+            (click)="sharePost()"
+            fill="solid"
+            [disabled]="isPosted"
+            color="success"
+            shape="round"
+            ><span *ngIf="isShareEdit">Edit</span>
+            <span *ngIf="!isShareEdit">Share</span>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-footer>
+  </ng-template>
+</ion-modal>

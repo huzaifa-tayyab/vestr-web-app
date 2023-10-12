@@ -1,0 +1,96 @@
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12" style="
+          border: 0.1px solid #b3b3b3;
+          border-top: none;
+          border-top: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+          padding: 15px;
+        ">
+        <ion-text style="
+            font-family: 'SF Pro Display';
+            font-style: normal;
+            font-weight: 600;
+            font-size: 21px;
+            line-height: 28px;
+            align-items: center;
+            letter-spacing: -0.001em;
+            display: inline-block;
+            margin-top: 10px;
+          ">
+          Biggest movers
+        </ion-text>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="12" style="border-left: solid 0.1px grey;border-right: solid 0.1px grey;">
+        <ion-row>
+          <ion-col
+            *ngFor="let item of biggerMoverStocks2; let i = index; let last = last"
+            size="6"
+            sizeSm="4"
+          >
+            <div *ngIf="item.data"
+              style="
+                border: 0.1px solid #b3b3b3;
+                transform: matrix(1, 0, 0, 1, 0, 0);
+                text-align: center;
+              "
+            >
+              <p
+                style="cursor: pointer"
+                routerLink="/app/market-detail/{{ item.symbol }}"
+              >
+                {{ item.symbol }}
+              </p>
+              <span *ngIf="item?.graphdata">
+                <p
+                  *ngIf="item.graphdata.length == 0"
+                  style="
+                    height: 165px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  "
+                >
+                  Loading...
+                </p>
+                <span *ngIf="item.graphdata.length > 0">
+                  <app-twelve-graph
+                    [type]="'stock'"
+                    [height]="70"
+                    [index]="i"
+                    [graphdata]="item.graphdata"
+                  ></app-twelve-graph>
+                </span>
+              </span>
+    
+              <ion-label routerLink="/app/market-detail/{{ item.symbol }}">{{
+                item.data?.close | currency
+              }}</ion-label
+              ><br /><br />
+              <span
+                *ngIf="item?.graphdata && item.graphdata.length > 0"
+                routerLink="/app/market-detail/{{ item.symbol }}"
+              >
+                <ion-label
+                  style="margin-bottom: 15px; display: inline-block"
+                  color="success"
+                  *ngIf="getIndexPercentage(item.data).key"
+                  >{{ getIndexPercentage(item.data).value | number : "1.2-2" }}%</ion-label
+                >
+                <ion-label
+                  style="margin-bottom: 15px; display: inline-block"
+                  color="danger"
+                  *ngIf="!getIndexPercentage(item.data).key"
+                  >{{ getIndexPercentage(item.data).value | number : "1.2-2" }}%</ion-label
+                >
+              </span>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

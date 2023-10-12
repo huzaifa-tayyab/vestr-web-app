@@ -1,0 +1,28 @@
+.title-2 {
+  font-size: 15px;
+}
+* {
+  margin-bottom: 0;
+  margin-bottom: 0;
+}
+
+.wrap- {
+  width: 250px;
+  display: inline-block;
+  white-space: break-spaces;
+  padding: 0 15px;
+}
+ion-button {
+  text-transform: none;
+  --box-shadow: none;
+}
+.checkhover {
+  :hover {
+    color: #1dcf5b !important;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+}
+.scrl::-webkit-scrollbar {
+  width: 10px;
+}

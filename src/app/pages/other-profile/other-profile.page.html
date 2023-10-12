@@ -1,0 +1,428 @@
+<ion-content>
+  <ion-grid fixed>
+    <ion-row>
+      <ion-col
+        size="12"
+        style="border: 0.1px solid #B3B3B3;height: 180px;border-top: none ;border-top: none; transform: matrix(1, 0, 0, 1, 0, 0);padding: 15px;background-image: url('{{cover_img_path}}{{userDetail?.cover_image}}');background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;"
+      >
+        <ion-text
+          style="
+            font-family: 'SF Pro Display';
+            font-style: normal;
+            font-weight: 600;
+            font-size: 21px;
+            line-height: 28px;
+            /* or 127% */
+
+            display: flex;
+            align-items: center;
+            letter-spacing: -0.001em;
+            display: inline-block;
+            margin-top: 10px;
+          "
+        >
+        </ion-text>
+      </ion-col>
+      <ion-col
+        size="12"
+        style="
+          border: 0.1px solid #b3b3b3;
+          border-top: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+        "
+      >
+        <ion-avatar
+          style="
+            margin-left: 15px;
+            margin-top: -48px;
+            height: 100px;
+            width: 100px;
+          "
+        >
+          <img
+            alt="Silhouette of a person's head"
+            src="{{profile_img_path}}{{userDetail?.profile_image}}"
+          />
+          <!-- <ion-fab-button
+            (click)="changeProfile()"
+            *ngIf="is_followed_by_loggedin_user!==1"
+            color="success"
+            size="small"
+            style="
+              position: absolute;
+              left: 80px;
+              top: 28px;
+              height: 25px;
+              width: 25px;
+            "
+          >
+            <ion-icon name="add"></ion-icon>
+          </ion-fab-button>
+          <ion-fab-button
+            (click)="changeProfile()"
+            *ngIf="is_followed_by_loggedin_user==1"
+            color="danger"
+            size="small"
+            style="
+              position: absolute;
+              left: 80px;
+              top: 28px;
+              height: 25px;
+              width: 25px;
+            "
+          >
+            <ion-icon name="remove"></ion-icon>
+          </ion-fab-button> -->
+        </ion-avatar>
+
+        <ion-buttons
+          style="float: right; margin-top: -47px; margin-right: 12px"
+        >
+          <ion-button>
+            <img src="assets/twit.png" width="25px" />
+          </ion-button>
+          <ion-button
+            fill="solid"
+            size="default"
+            style="font-weight: 600; width: 150px"
+            shape="round"
+            color="light"
+            (click)="changeProfile()"
+            *ngIf="is_followed_by_loggedin_user==1"
+          >
+            Unfollow
+          </ion-button>
+          <ion-button
+            fill="solid"
+            size="default"
+            shape="round"
+            style="font-weight: 600; width: 150px"
+            color="dark"
+            (click)="changeProfile()"
+            *ngIf="is_followed_by_loggedin_user!==1"
+          >
+            Follow
+          </ion-button>
+          <ion-button
+            fill="solid"
+            size="default"
+            shape="round"
+            style="font-weight: 600; width: 150px"
+            color="dark"
+            (click)="goDetailsProfile(user_uid)"
+          >
+            Message
+          </ion-button>
+        </ion-buttons>
+        <ion-text>
+          <h1 style="margin-left: 20px; font-size: 21px; font-weight: 600">
+            {{userDetail?.fname | titlecase}} {{userDetail?.lname | titlecase}}
+            &nbsp;<span *ngIf="userDetail?.is_verified == 1">
+              <ion-icon
+                style="color: #1dcf5b; height: 20px; width: 20px"
+                name="checkmark-done-sharp"
+              ></ion-icon>
+            </span>
+          </h1>
+          <p style="margin-left: 20px; margin-top: -6px">
+            @{{userDetail?.username}}
+          </p>
+          <p
+            style="
+              margin-left: 20px;
+              margin-top: 10px;
+              margin-bottom: 10px !important;
+            "
+          >
+            CEO and Founder of Vestr, long term investor in UCO and DOGE, the
+            foundations that this company was born on.
+          </p>
+          <p
+            style="
+              color: #1dcf5b;
+              margin-top: 10px;
+              margin-bottom: 10px !important;
+              margin-left: 20px;
+            "
+          >
+            adamyorke.com
+          </p>
+          <p
+            style="padding: 10px; font-size: 17px"
+            *ngIf="(userDetail?.bio && userDetail?.privacy==1) || (is_followed_by_loggedin_user == 1 && userDetail?.privacy == 3)"
+            innerHTML="{{userDetail?.bio}}"
+          ></p>
+          <p
+            *ngIf="userDetail?.privacy==1  || (is_followed_by_loggedin_user == 1 && userDetail?.privacy == 3)"
+            style="margin-left: 10px; margin-top: -5px"
+          >
+            <!-- <span style="color: #2dd36f">{{userDetail?.email}}</span> -->
+          </p>
+        </ion-text>
+        <p style="margin-left: 10px">
+          <ion-buttons
+            *ngIf="userDetail?.privacy==1   || (is_followed_by_loggedin_user == 1 && userDetail?.privacy == 3)"
+          >
+            <ion-button id="followerremote">
+              <span style="color: #000"
+                ><b>{{followed_by?.count}}</b>&nbsp;</span
+              >
+              Followers
+            </ion-button>
+            <ion-popover trigger="followerremote" triggerAction="click">
+              <ng-template>
+                <ion-content class="padding-0">
+                  <ion-list>
+                    <ion-label
+                      *ngFor="let item of followed_by?.rows; let i=index"
+                    >
+                      <p
+                        style="
+                          margin-left: 10px;
+                          cursor: pointer;
+                          font-weight: 600;
+                        "
+                        (click)="popoverController.dismiss()"
+                        routerLink="/app/profile/{{ item?.follow_by.user_uid }}"
+                      >
+                        {{item.follow_by.fname }} {{item.follow_by.lname }}
+                      </p>
+                    </ion-label>
+                  </ion-list>
+                </ion-content>
+              </ng-template>
+            </ion-popover>
+            <ion-button id="followingremote">
+              <span><b style="color: #000">{{follow_to?.count}}</b></span
+              >&nbsp;Following
+            </ion-button>
+            <ion-popover trigger="followingremote" triggerAction="click">
+              <ng-template>
+                <ion-content class="padding-0">
+                  <ion-list>
+                    <ion-label
+                      *ngFor="let item of follow_to?.rows; let i=index"
+                    >
+                      <p
+                        style="
+                          margin-left: 10px;
+                          cursor: pointer;
+                          font-weight: 600;
+                        "
+                        (click)="popoverController.dismiss()"
+                        routerLink="/app/profile/{{ item?.follow_to.user_uid }}"
+                      >
+                        {{item.follow_to.fname }} {{item.follow_to.lname }}
+                      </p>
+                    </ion-label>
+                  </ion-list>
+                </ion-content>
+              </ng-template>
+            </ion-popover>
+            <!-- <ion-button
+              ><span><b style="color: #000 !important">0</b></span
+              >&nbsp;Subscribers
+            </ion-button> -->
+          </ion-buttons>
+        </p>
+        <span *ngIf="followed_by?.rows">
+          <ion-text
+            *ngIf="(followed_by?.rows.length>0 && userDetail?.privacy==1) || (is_followed_by_loggedin_user == 1 && userDetail?.privacy == 3)"
+          >
+            <p
+              style="margin-left: 20px; font-size: 17px"
+              *ngIf="followed_by?.rows.length==1"
+            >
+              Followed by
+              <span *ngFor="let follow of followed_by?.rows; let x=index">
+                <span style="color: #2dd36f; cursor: pointer">
+                  {{follow?.follow_by.username}}
+                </span>
+              </span>
+            </p>
+            <p
+              style="
+                margin-left: 20px;
+                font-size: 17px;
+                margin-bottom: 10px !important;
+              "
+              *ngIf="followed_by?.rows.length>1"
+            >
+              Followed by
+              <span *ngIf="!isExpand">
+                <span style="color: #2dd36f; cursor: pointer">
+                  {{followed_by?.rows[0]?.follow_by.username}}
+                </span>
+                and
+                <span
+                  style="color: #2dd36f; cursor: pointer"
+                  (click)="isExpand=true"
+                >
+                  {{followed_by?.rows?.length - 1}} others
+                </span>
+              </span>
+              <span *ngIf="isExpand" (click)="isExpand=false">
+                <span
+                  *ngFor="let follow of followed_by?.rows; let ii=index; let last=last"
+                  style="color: #2dd36f; cursor: pointer"
+                >
+                  {{follow.follow_by.username}}<span *ngIf="!last">,</span>
+                </span>
+              </span>
+            </p>
+          </ion-text>
+        </span>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="userDetail?.privacy==2 || is_followed_by_loggedin_user==0">
+      <ion-col
+        size="12"
+        style="
+          border: 0.1px solid #b3b3b3;
+          border-top: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+        "
+      >
+        <ion-grid fixed>
+          <ion-row class="ion-justify-content-center" style="padding: 30px">
+            <ion-col size-sm="6" size="12" style="text-align: center">
+              <ion-icon
+                style="font-size: 56px"
+                color="danger"
+                name="shield-checkmark-outline"
+              ></ion-icon>
+              <h1>
+                {{userDetail?.fname | titlecase}} {{userDetail?.lname}} locked
+                <span *ngIf="userDetail?.gender=='male'">his</span>
+                <span *ngIf="userDetail?.gender=='female'">her</span>
+                profile
+              </h1>
+              <p>
+                Only <span *ngIf="userDetail?.gender=='male'">his</span>
+                <span *ngIf="userDetail?.gender=='female'">her</span> friends
+                can see what <span *ngIf="userDetail?.gender=='male'">he</span>
+                <span *ngIf="userDetail?.gender=='female'">she</span> shares on
+                <span *ngIf="userDetail?.gender=='male'">his</span>
+                <span *ngIf="userDetail?.gender=='female'">her</span>
+                profile.
+              </p>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-col>
+    </ion-row>
+    <ion-row
+      *ngIf="userDetail?.privacy==1 || (is_followed_by_loggedin_user == 1 && userDetail?.privacy == 3)"
+    >
+      <ion-col
+        size="12"
+        style="
+          border: 0.1px solid #b3b3b3;
+          border-top: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+        "
+      >
+        <ion-buttons
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 10px;
+          "
+        >
+          <ion-button
+            color="success"
+            *ngIf="profileType=='general'"
+            style="text-transform: capitalize"
+          >
+            Posts
+          </ion-button>
+          <ion-button
+            *ngIf="profileType!=='general'"
+            (click)="profileType='general'"
+            style="text-transform: capitalize"
+          >
+            Posts
+          </ion-button>
+          <ion-button
+            color="success"
+            *ngIf="profileType=='portfolio'"
+            style="text-transform: capitalize"
+          >
+            Portfolio
+          </ion-button>
+          <ion-button
+            (click)="profileType='portfolio'"
+            *ngIf="profileType!=='portfolio'"
+            style="text-transform: capitalize"
+          >
+            Portfolio
+          </ion-button>
+
+          <ion-button
+            color="success"
+            *ngIf="profileType=='reviews'"
+            (click)="profileType='reviews'"
+            style="text-transform: capitalize"
+          >
+            Reviews
+          </ion-button>
+          <ion-button
+            (click)="profileType='reviews'"
+            *ngIf="profileType!=='reviews'"
+            style="text-transform: capitalize"
+          >
+            Reviews
+          </ion-button>
+        </ion-buttons>
+      </ion-col>
+    </ion-row>
+    <ion-row
+      *ngIf="(profileType!=='general' && userDetail?.privacy==1) || (is_followed_by_loggedin_user == 1 && userDetail?.privacy == 3)"
+    >
+      <ion-col
+        size="12"
+        style="
+          border: 0.1px solid #b3b3b3;
+          border-top: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+        "
+      >
+        <ion-grid fixed>
+          <ion-row class="ion-justify-content-center">
+            <ion-col size-sm="6" size="12" style="text-align: center">
+              <h1>Coming Soon</h1>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-col>
+    </ion-row>
+    <ion-row
+      *ngIf="(userDetail?.privacy==1 && profileType=='general')  || (is_followed_by_loggedin_user == 1 && userDetail?.privacy == 3)"
+    >
+      <ion-col
+        size="12"
+        *ngFor="let item of items; let i=index"
+        style="
+          border: 0.1px solid #b3b3b3;
+          border-top: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+        "
+      >
+        <app-feed
+          [item]="item"
+          [index]="i"
+          [readmore]="true"
+          [profile_image_path]="profile_image_path"
+          [vestLogin]="vestLogin"
+          [file_path]="file_path"
+          [postDetailsData]="postDetailsData"
+          (postDetails)="postDetails($event)"
+          (setVote)="setVote($event)"
+        ></app-feed>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

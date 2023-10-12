@@ -1,0 +1,239 @@
+<ion-content>
+  <ion-grid fixed>
+    <ion-row>
+      <ion-col
+        size="12"
+        style="padding: 15px; border: solid 0.1px lightgray; border-top: none"
+      >
+        <ion-icon
+          routerLink="/app/rooms"
+          style="font-size: 24px; cursor: pointer"
+          name="close"
+          class="cross-icons"
+        ></ion-icon>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col
+        size="12"
+        style="padding: 15px; border: solid 0.1px lightgray; border-top: none"
+      >
+        <p
+          style="
+            font-style: normal;
+            font-weight: 600;
+            font-size: 22px;
+            line-height: 28px;
+            align-items: center;
+            letter-spacing: -0.001em;
+          "
+        >
+          Create Room
+        </p>
+      </ion-col>
+    </ion-row>
+    <form
+      [formGroup]="orderForm"
+      style="
+        padding: 10px;
+        border: solid 0.1px lightgray;
+        border-top: none;
+        border-bottom: none;
+      "
+    >
+      <div
+        formArrayName="items"
+        *ngFor="let item of orderFormControl.controls; let i = index;let last = last;"
+      >
+        <div [formGroupName]="i">
+          <ion-row>
+            <ion-col size="12" style="padding: 15px; margin-top: -10px">
+              <ion-row>
+                <ion-col size="12" sizeSm="2">
+                  <p style="font-size: 16px;padding-top: 16px;">Name:</p>
+                </ion-col>
+                <ion-col size="12" sizeSm="10">
+                  <ion-item style="--background: transparent;height: 45px;border-bottom: 1px solid #d3d3d3;">
+                    <ion-input formControlName="name"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="12" sizeSm="2">
+                  <p style="font-size: 16px; padding-top: 16px;">Username:</p>
+                </ion-col>
+                <ion-col size="12" sizeSm="10">
+                  <ion-item style="--background: transparent;height: 45px;border-bottom: 1px solid #d3d3d3;">
+                    <ion-input
+                      formControlName="username"
+                      (keydown.space)="$event.preventDefault();"
+                    ></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="12" sizeSm="2">
+                  <p style="font-size: 16px; padding-top: 17px;">Description:</p>
+                </ion-col>
+                <ion-col size="12" sizeSm="10">
+                  <ion-item style="--background: transparent;height: 45px;border-bottom: 1px solid #d3d3d3;">
+                    <ion-input formControlName="description"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row style="margin-top: 10px;">
+                <ion-col size="12" sizeSm="4">
+                  <p style="font-size: 16px; padding-top: 17px;">
+                    Categories (select up to 3):
+                  </p>
+                </ion-col>
+                <ion-col size="12" sizeSm="8">
+                  <ion-list>
+                    <ion-item style="--background: transparent">
+                      <ion-select
+                        mode="ios"
+                        aria-label="Cat"
+                        placeholder="Please select"
+                        [multiple]="true"
+                        formControlName="categories"
+                      >
+                        <ion-select-option value="technology"
+                          >Technology</ion-select-option
+                        >
+                        <ion-select-option value="finance"
+                          >Finance</ion-select-option
+                        >
+                        <ion-select-option value="media"
+                          >Media</ion-select-option
+                        >
+                        <ion-select-option value="energy"
+                          >Energy</ion-select-option
+                        >
+                        <ion-select-option value="consumer services">
+                          Consumer services
+                        </ion-select-option>
+                        <ion-select-option value="healthcare"
+                          >Healthcare</ion-select-option
+                        >
+                        <ion-select-option value="materials"
+                          >Materials</ion-select-option
+                        >
+                        <ion-select-option value="real estate"
+                          >Real Estate</ion-select-option
+                        >
+                        <ion-select-option value="consumer discretionary">
+                          Consumer discretionary
+                        </ion-select-option>
+                        <ion-select-option value="utilities"
+                          >Utilities</ion-select-option
+                        >
+                        <ion-select-option value="industrials"
+                          >Industrials</ion-select-option
+                        >
+                        <ion-select-option value="crypto (general)"
+                          >Crypto (general)</ion-select-option
+                        >
+                        <ion-select-option value="deFi">DeFi</ion-select-option>
+                        <ion-select-option value="fun">Fun</ion-select-option>
+                        <ion-select-option value="stocks (general)"
+                          >Stocks (general)</ion-select-option
+                        >
+                      </ion-select>
+                    </ion-item>
+                  </ion-list>
+                </ion-col>
+              </ion-row>
+              <ion-row style="margin-top: 15px;">
+                <ion-col size="12" sizeSm="4">
+                  <p style="font-size: 16px; color: none">Type of room:</p>
+                </ion-col>
+                <ion-col size="12" sizeSm="8">
+                  <ion-button
+                    fill="outline"
+                    shape="round"
+                    [color]="isCat=='1' ? 'success' : 'dark'"
+                    (click)="isCat = '1'"
+                  >
+                    Public
+                  </ion-button>
+                  &nbsp;&nbsp;
+                  <ion-button
+                    fill="outline"
+                    shape="round"
+                    color="dark"
+                    [color]="isCat=='2' ? 'success' : 'dark'"
+                    (click)="isCat = '2'"
+                  >
+                    Private
+                  </ion-button>
+                </ion-col>
+              </ion-row>
+
+              <ion-row *ngIf="isCat=='2'">
+                <ion-col size="12" sizeSm="2">
+                  <p style="font-size: 16px; color: none">Password:</p>
+                </ion-col>
+                <ion-col size="12" sizeSm="10">
+                  <ion-item style="--background: transparent">
+                    <ion-input formControlName="password"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <!-- <ion-row>
+                <ion-col class="ion-hide-sm-down" sizeSm="2">
+                </ion-col>
+                <ion-col size="12" sizeSm="10">
+                  <ion-radio-group value="custom-checked" style="font-size: 14px;">
+                    <ion-radio value="custom"></ion-radio> &nbsp;Anyone can join &nbsp;
+                    <ion-radio value="custom-checked"></ion-radio> &nbsp;Anyone with link &nbsp;<br /><br />
+                    <ion-radio value="custom2"></ion-radio> &nbsp;Password to join
+                  </ion-radio-group>
+                </ion-col>
+              </ion-row> -->
+              <ion-row>
+                <ion-col size="12" sizeSm="4">
+                  <p style="font-size: 16px; padding-top: 15px;">
+                    Link (automatically generated):
+                  </p>
+                </ion-col>
+                <ion-col size="12" sizeSm="8">
+                  <ion-item style="--background: transparent; cursor: pointer">
+                    <p (click)="copyMessage()">{{roomPath}}</p>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="12">
+                  <ion-buttons>
+                    <label class="file-lbl">Upload Image
+                      <input
+                        type="file"
+                        id="myFileInput"
+                        (change)="uploadFile($event)"
+                      />
+                    </label>
+                  </ion-buttons>
+                </ion-col>
+                <ion-col size="12" *ngIf="url" style="text-align: center">
+                  <img [src]="url" alt="uploadImage" loading="lazy" />
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="12" style="text-align: center">
+                  <ion-button
+                    fill="solid"
+                    shape="round"
+                    color="success"
+                    (click)="addRoom()"
+                  >
+                    Save
+                  </ion-button>
+                </ion-col>
+              </ion-row>
+            </ion-col>
+          </ion-row>
+        </div>
+      </div>
+    </form>
+  </ion-grid>
+</ion-content>

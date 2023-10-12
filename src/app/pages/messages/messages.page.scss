@@ -1,0 +1,8 @@
+ion-list {
+    --offset-bottom: 0px !important;
+    --overflow: scroll;
+    overflow: auto;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }

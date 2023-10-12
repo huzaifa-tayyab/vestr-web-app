@@ -1,0 +1,195 @@
+<ion-content [fullscreen]="true">
+  <ion-grid style="--ion-grid-padding: 0">
+    <ion-row>
+      <ion-col
+        size-sm="5"
+        class="ion-hide-sm-down"
+        style="
+          background-image: url('assets/icon/1.png');
+          height: 100vh;
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: cover;
+        "
+      >
+        <h2>Invest with the best.</h2>
+      </ion-col>
+      <ion-col size-sm="7" style="height: 100vh; overflow: auto">
+        <ion-grid fixed style="padding: 24px; margin-top: 10%">
+          <ion-row>
+            <ion-col size="10">
+              <img src="assets/icon/dark.png" style="height: 65px" alt="logo" />
+            </ion-col>
+            <ion-col size="2">
+              <!-- <app-theme-set></app-theme-set> -->
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12">
+              <ion-label style="font-size: 22px; font-weight: 600"
+                >Mobile Verification</ion-label
+              >
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="12">
+              <ion-label style="font-size: 16px; font-weight: 400"
+                >Please enter your phone number to verify your
+                identity.</ion-label
+              >
+            </ion-col>
+          </ion-row>
+          <form [formGroup]="orderForm" (ngSubmit)="login()">
+            <div
+              formArrayName="items"
+              *ngFor="let item of orderFormControl.controls; let i = index;let last = last;"
+            >
+              <div [formGroupName]="i">
+                <ion-row style="margin-top: 20px" *ngIf="!isApiSend">
+                  <ion-col size="12">
+                    <ion-item style="margin-bottom: 10px">
+                      <ion-label
+                        style="
+                          font-size: 16px;
+                          font-weight: 600;
+                          margin-bottom: 8px;
+                        "
+                        position="stacked"
+                        >Phone No.</ion-label
+                      >
+                      <ion-input
+                        maxlength="10"
+                        id="phone"
+                        [readonly]="true"
+                        (keypress)="numberOnlyValidation($event)"
+                        placeholder="Enter Phone No."
+                        formControlName="phone"
+                      ></ion-input>
+                    </ion-item>
+                    <ion-text
+                      color="danger"
+                      *ngIf="(isSubmitted) && orderForm.get('items')['controls'][i].controls.phone.errors?.required"
+                    >
+                      Phone is required.
+                    </ion-text>
+                    <ion-text
+                      color="danger"
+                      *ngIf="(isSubmitted) && orderForm.get('items')['controls'][i].controls.phone.errors?.minlength"
+                    >
+                      Phone should be only 10 numbers.
+                    </ion-text>
+                    <ion-text
+                      color="danger"
+                      *ngIf="(isSubmitted) && orderForm.get('items')['controls'][i].controls.phone.errors?.maxlength"
+                    >
+                      Phone should be only 10 numbers.
+                    </ion-text>
+                    <ion-text
+                      color="danger"
+                      *ngIf="(isSubmitted) && orderForm.get('items')['controls'][i].controls.phone.errors?.pattern"
+                    >
+                      Phone is required only numbers.
+                    </ion-text>
+                  </ion-col>
+                </ion-row>
+                <ion-row style="margin-top: 10px" *ngIf="!isApiSend">
+                  <ion-col size-sm="12" size-md="12" size-lg="6">
+                    <ion-item>
+                      <ion-checkbox formControlName="is_term"></ion-checkbox>
+                      <ion-label class="ion-text-wrap" style="opacity: 1"
+                        >&nbsp; I accept the terms and conditions</ion-label
+                      >
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+                <ion-row style="margin-top: 10px" *ngIf="!isApiSend">
+                  <ion-col size-sm="12" size-md="12" size-lg="6">
+                    <ion-button
+                      type="button"
+                      (click)="verifyAPI()"
+                      expand="block"
+                      shape="round"
+                      color="success"
+                    >
+                      Verify Me
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+                <ion-row style="margin-top: 20px" *ngIf="isApiSend">
+                  <ion-col size="12">
+                    <ion-item style="margin-bottom: 10px">
+                      <ion-label
+                        style="
+                          font-size: 16px;
+                          font-weight: 600;
+                          margin-bottom: 8px;
+                        "
+                        position="stacked"
+                        >OTP Number</ion-label
+                      >
+                      <ion-input
+                        maxlength="6"
+                        id="otp"
+                        (keypress)="numberOnlyValidation($event)"
+                        placeholder="Enter OTP No."
+                        formControlName="otp"
+                      ></ion-input>
+                    </ion-item>
+                    <ion-text
+                      color="danger"
+                      *ngIf="(isSubmitted) && orderForm.get('items')['controls'][i].controls.otp.errors?.required"
+                    >
+                      OTP is required.
+                    </ion-text>
+                    <ion-text
+                      color="danger"
+                      *ngIf="(isSubmitted) && orderForm.get('items')['controls'][i].controls.otp.errors?.minlength"
+                    >
+                      OTP should be only 6 numbers.
+                    </ion-text>
+                    <ion-text
+                      color="danger"
+                      *ngIf="(isSubmitted) && orderForm.get('items')['controls'][i].controls.otp.errors?.maxlength"
+                    >
+                      OTP should be only 6 numbers.
+                    </ion-text>
+                    <ion-text
+                      color="danger"
+                      *ngIf="(isSubmitted) && orderForm.get('items')['controls'][i].controls.otp.errors?.pattern"
+                    >
+                      OTP is required only numbers.
+                    </ion-text>
+                  </ion-col>
+                </ion-row>
+                <ion-row style="margin-top: 10px" *ngIf="isApiSend">
+                  <ion-col size-sm="12" size-md="12" size-lg="6">
+                    <ion-button
+                      (click)="login()"
+                      type="button"
+                      expand="block"
+                      shape="round"
+                      color="success"
+                    >
+                      Verify
+                    </ion-button>
+                  </ion-col>
+                  <ion-col size-sm="12" size-md="12" size-lg="6">
+                    <ion-button
+                      type="button"
+                      (click)="resendOTP()"
+                      expand="block"
+                      shape="round"
+                      color="success"
+                    >
+                      Resend OTP
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+              </div>
+            </div>
+          </form>
+        </ion-grid>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

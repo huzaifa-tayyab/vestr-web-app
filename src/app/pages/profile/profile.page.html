@@ -1,0 +1,297 @@
+<ion-content>
+  <ion-grid fixed>
+    <ion-row>
+      <ion-col
+        size="12"
+        style="border: 0.1px solid #B3B3B3;height: 180px;border-top: none ;border-top: none; transform: matrix(1, 0, 0, 1, 0, 0);padding: 15px;background-image: url('{{cover_img_path}}{{userDetail?.cover_image}}');background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;"
+      >
+        <ion-text
+          style="
+            
+            font-style: normal;
+            font-weight: 600;
+            font-size: 21px;
+            line-height: 28px;
+            /* or 127% */
+
+            display: flex;
+            align-items: center;
+            letter-spacing: -0.001em;
+            display: inline-block;
+            margin-top: 10px;
+          "
+        >
+        </ion-text>
+      </ion-col>
+      <ion-col
+        size="12"
+        style="
+          border: 0.1px solid #b3b3b3;
+          border-top: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+        "
+      >
+        <ion-avatar
+          style="
+            margin-left: 15px;
+            margin-top: -48px;
+            height: 100px;
+            width: 100px;
+          "
+        >
+          <img
+            alt="Silhouette of a person's head"
+            src="{{profile_img_path}}{{userDetail?.profile_image}}"
+          />
+        </ion-avatar>
+
+        <ion-buttons style="float: right; margin-top: 12px; margin-right: 12px">
+          <ion-button size="default" shape="round" color="success">
+            Privacy :
+          </ion-button>
+          <ion-list style="background: transparent" lines="none">
+            <ion-item style="--background: transparent">
+              <select
+                style="
+                  color: #1dcf5b;
+                  font-size: 14px;
+                  font-weight: 600;
+                  padding-left: 4px;
+                  background: none;
+                  border: none;
+                  outline: 0px;
+                "
+                interface="popover"
+                placeholder="Privacy"
+                color="success"
+                (ngModelChange)="changeProfile($event)"
+                [(ngModel)]="getPrivacy"
+              >
+                <option style="font-size: 14px" [value]="2">Private</option>
+                <option style="font-size: 14px" [value]="1">Public</option>
+                <option style="font-size: 14px" [value]="3">Followers</option>
+              </select>
+            </ion-item>
+          </ion-list>
+          <!-- <ion-button fill="outline" size="default" shape="round" color="danger" (click)="changeProfile('2')" *ngIf="userDetail?.privacy==1">
+            Hide details
+          </ion-button>
+          <ion-button fill="outline" size="default" shape="round" color="success" (click)="changeProfile('1')" *ngIf="userDetail?.privacy==2">
+            Show details
+          </ion-button> -->
+          <ion-button
+            fill="outline"
+            size="default"
+            shape="round"
+            color="success"
+            routerLink="/app/profile-edit"
+          >
+            Edit profile
+          </ion-button>
+        </ion-buttons>
+        <ion-text style="display: inline-block">
+          <h1 class="profil-name" style="margin-left: 10px; font-size: 21px; font-weight: 600">
+            {{userDetail?.fname | titlecase}} {{userDetail?.lname | titlecase}}
+            &nbsp;<span *ngIf="userDetail?.is_verified == 1">
+              <ion-icon
+                style="color: #1dcf5b; height: 20px; width: 20px"
+                name="checkmark-done-sharp"
+              ></ion-icon>
+            </span>
+          </h1>
+          <p style="margin-left: 10px; margin-top: -6px">
+            @{{userDetail?.username}}
+          </p>
+          <p
+            style="padding: 10px; font-size: 17px"
+            *ngIf="userDetail?.bio"
+            innerHTML="{{userDetail?.bio}}"
+          ></p>
+          <!-- <p style="margin-left: 10px;margin-top: -5px;"><span style="color: #2dd36f" >{{userDetail?.email}}</span></p> -->
+        </ion-text>
+        <ion-buttons>
+          <ion-button class="edit-buttons" style="font-weight: 600" id="followerlocal">
+            {{followed_by?.count}} Followers
+          </ion-button>
+          <ion-popover trigger="followerlocal" triggerAction="click">
+            <ng-template>
+              <ion-content class="padding-0">
+                <ion-list>
+                  <ion-label
+                    *ngFor="let item of followed_by?.rows; let i=index"
+                  >
+                    <p
+                      style="
+                        margin-left: 10px;
+                        cursor: pointer;
+                        font-weight: 600;
+                      "
+                      (click)="popoverController.dismiss()"
+                      routerLink="/app/profile/{{ item?.followed_by.user_uid }}"
+                    >
+                      {{item.followed_by.fname }} {{item.followed_by.lname }}
+                    </p>
+                  </ion-label>
+                </ion-list>
+              </ion-content>
+            </ng-template>
+          </ion-popover>
+          <ion-button class="edit-buttons" style="font-weight: 600" id="followinglocal">
+            {{follow_to?.count}} Following
+          </ion-button>
+          <ion-popover trigger="followinglocal" triggerAction="click">
+            <ng-template>
+              <ion-content class="padding-0">
+                <ion-list>
+                  <ion-label *ngFor="let item of follow_to?.rows; let i=index">
+                    <p
+                      style="
+                        margin-left: 10px;
+                        cursor: pointer;
+                        font-weight: 600;
+                      "
+                      (click)="popoverController.dismiss()"
+                      routerLink="/app/profile/{{ item?.follow_to.user_uid }}"
+                    >
+                      {{item.follow_to.fname }} {{item.follow_to.lname }}
+                    </p>
+                  </ion-label>
+                </ion-list>
+              </ion-content>
+            </ng-template>
+          </ion-popover>
+        </ion-buttons>
+        <ion-text *ngIf="followed_by?.rows.length>0">
+          <p
+            style="margin-left: 10px; font-size: 17px"
+            *ngIf="followed_by?.rows.length==1"
+          >
+            Followed by
+            <span *ngFor="let follow of followed_by?.rows; let x=index">
+              <span style="color: #2dd36f; cursor: pointer">
+                {{follow?.follow_by.username}}
+              </span>
+            </span>
+          </p>
+          <p
+            style="margin-left: 10px; font-size: 17px;padding-bottom: 10px;"
+            *ngIf="followed_by?.rows.length>1"
+          >
+            Followed by
+            <span *ngIf="!isExpand">
+              <span style="color: #2dd36f; cursor: pointer">
+                {{followed_by?.rows[0]?.follow_by.username}}
+              </span>
+              and
+              <span
+                style="color: #2dd36f; cursor: pointer"
+                (click)="isExpand=true"
+              >
+                {{followed_by?.rows?.length - 1}} others
+              </span>
+            </span>
+            <span *ngIf="isExpand" (click)="isExpand=false">
+              <span
+                *ngFor="let follow of followed_by?.rows; let ii=index; let last=last"
+                style="color: #2dd36f; cursor: pointer"
+              >
+                {{follow.follow_by.username}}<span *ngIf="!last">,</span>
+              </span>
+            </span>
+          </p>
+        </ion-text>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col
+        size="12"
+        style="
+          border: 0.1px solid #b3b3b3;
+          border-top: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+        "
+      >
+        <ion-buttons>
+          <ion-button class="edit-buttons"  color="success" *ngIf="profileType=='general'">
+            General
+          </ion-button>
+          <ion-button
+            *ngIf="profileType!=='general'"
+            (click)="profileType='general'"
+          >
+            General
+          </ion-button>
+          <ion-button class="edit-buttons" color="success" *ngIf="profileType=='portfolio'">
+            Portfolio
+          </ion-button>
+          <ion-button
+          class="edit-buttons"
+            (click)="profileType='portfolio'"
+            *ngIf="profileType!=='portfolio'"
+          >
+            Portfolio
+          </ion-button>
+          <ion-button
+          class="edit-buttons"
+            color="success"
+            *ngIf="profileType=='reviews'"
+            (click)="profileType='reviews'"
+          >
+            Reviews
+          </ion-button>
+          <ion-button
+          class="edit-buttons"
+            (click)="profileType='reviews'"
+            *ngIf="profileType!=='reviews'"
+          >
+            Reviews
+          </ion-button>
+        </ion-buttons>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="profileType!=='general'">
+      <ion-col
+        size="12"
+        style="
+          border: 0.1px solid #b3b3b3;
+          border-top: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+        "
+      >
+        <ion-grid fixed>
+          <ion-row class="ion-justify-content-center">
+            <ion-col size-sm="6" size="12" style="text-align: center">
+              <h1>Coming Soon</h1>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="profileType=='general'">
+      <ion-col
+        size="12"
+        *ngFor="let item of items; let i=index"
+        style="
+          border: 0.1px solid #b3b3b3;
+          border-top: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+        "
+      >
+        <app-feed
+          [item]="item"
+          [readmore]="true"
+          [index]="i"
+          [profile_image_path]="profile_image_path"
+          [vestLogin]="vestLogin"
+          [file_path]="file_path"
+          (removeItem)="removeItem($event)"
+          [postDetailsData]="postDetailsData"
+          (postDetails)="postDetails($event)"
+          (setVote)="setVote($event)"
+        ></app-feed>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

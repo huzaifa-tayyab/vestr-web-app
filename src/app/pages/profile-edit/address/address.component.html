@@ -1,0 +1,56 @@
+<form [formGroup]="orderForm" style="padding: 10px;">
+  <div formArrayName="items" *ngFor="let item of orderFormControl.controls; let i = index;let last = last;">
+    <div [formGroupName]="i">
+      <ion-row>
+        <ion-col size="12">
+          <ion-label>Address line 1</ion-label>
+          <ion-item lines="none" fill="outline" style="margin-top: 10px;margin-bottom: 10px;">
+            <!-- <input class="native-input sc-ion-input-md" formControlName="address_1"  ngx-google-places-autocomplete [options]='options' #placesRef="ngx-places" (onAddressChange)="AddressChange($event)" /> -->
+            <ion-input placeholder="Your Address" formControlName="address_1"   ></ion-input>
+          </ion-item>
+          <ion-text color="danger"
+            *ngIf="(isSubmitted) && orderForm.get('items')['controls'][i].controls.address_1.errors?.required">
+            Address is required.
+          </ion-text>
+        </ion-col>
+        <ion-col size="12">
+          <ion-label>City</ion-label>
+          <ion-item lines="none" fill="outline" style="margin-top: 10px;margin-bottom: 10px;">
+            <ion-input placeholder="Your city" formControlName="city" ></ion-input>
+          </ion-item>
+          <ion-text color="danger"
+            *ngIf="(isSubmitted) && orderForm.get('items')['controls'][i].controls.city.errors?.required">
+            City is required.
+          </ion-text>
+        </ion-col>
+        <ion-col size="12">
+        </ion-col>
+        <ion-col size="12">
+          <ion-label>State</ion-label>
+          <ion-item lines="none" fill="outline" style="margin-top: 10px;margin-bottom: 10px;">
+            <ion-input placeholder="Your state" formControlName="state" ></ion-input>
+          </ion-item>
+          <ion-text color="danger"
+            *ngIf="(isSubmitted) && orderForm.get('items')['controls'][i].controls.state.errors?.required">
+            State is required.
+          </ion-text>
+        </ion-col>
+        <ion-col size="12">
+          <ion-label>Zip</ion-label>
+          <ion-item lines="none" fill="outline" style="margin-top: 10px;margin-bottom: 10px;">
+            <ion-input (keypress)="numberOnlyValidation($event)" maxlength="5" placeholder="Zip Code" type="text" formControlName="zip" ></ion-input>
+          </ion-item>
+          <ion-text color="danger"
+            *ngIf="(isSubmitted) && orderForm.get('items')['controls'][i].controls.zip.errors?.required">
+            Zip is required.
+          </ion-text>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12">
+          <ion-button (click)="submit()" style="margin-top: 10px;--border-radius: 20px;" size="default" color="success">Update</ion-button>
+        </ion-col>
+      </ion-row>
+    </div>
+  </div>
+</form>

@@ -1,0 +1,7 @@
+{
+  "name": "vestr-design",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

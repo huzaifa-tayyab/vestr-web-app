@@ -1,0 +1,93 @@
+<ion-grid>
+  <ion-row>
+    <ion-col size="12" sizeSm="6">
+      <ion-searchbar
+        color="light"
+        style="--border-radius: 20px"
+        placeholder="Filter by keyword"
+      ></ion-searchbar>
+    </ion-col>
+    <ion-col sizeSm="6"></ion-col>
+    <ion-col size="12">
+      <p style="padding: 14px" *ngIf="notificationList.length == 0">
+        No records found.
+      </p>
+    </ion-col>
+    <ion-col size="12" *ngFor="let item of notificationList; let i = index">
+      <ion-item lines="full" style="--background: transparent; padding: 14px">
+        <ion-avatar slot="start" *ngIf="!item.from_user?.profile_image">
+          <img
+            alt="Silhouette of a person's head"
+            src="https://ionicframework.com/docs/img/demos/avatar.svg"
+          />
+        </ion-avatar>
+        <ion-avatar slot="start" *ngIf="item.from_user?.profile_image">
+          <img
+            alt="Silhouette of a person's head"
+            src="{{ profile_image_path }}/{{ item.from_user?.profile_image }}"
+          />
+        </ion-avatar>
+        <p style="margin-left: 40px">
+          <span
+            (click)="goDetailsProfile(item?.from_user.user_uid)"
+            style="
+              font-family: 'SF Pro Display';
+              font-style: normal;
+              font-weight: 600;
+              font-size: 16px;
+              line-height: 22px;
+              /* or 138% */
+              cursor: pointer;
+              letter-spacing: -0.001em;
+            "
+          >
+            {{ item.from_user?.fname }} {{ item.from_user?.lname }}</span
+          >&nbsp;
+          <span *ngIf="item.notification_type == 'follow'"
+            >started following you
+          </span>
+          <span *ngIf="item.notification_type == 'unfollow'"
+            >stopped following you
+          </span>
+          <span *ngIf="item.notification_type == 'like'"
+            >liked your analysis
+          </span>
+          <span *ngIf="item.notification_type == 'unlike'"
+            >unliked your analysis
+          </span>
+          <span *ngIf="item.notification_type == 'repost'"
+            >reposted your analysis
+          </span>
+          <span
+            *ngIf="
+              item.notification_type != 'follow' &&
+              item.notification_type != 'unfollow'
+            "
+            >“{{ item.notification_description }}”</span
+          >
+          <span
+            style="
+              font-family: 'SF Pro Display';
+              font-style: normal;
+              font-weight: 400;
+              font-size: 14px;
+              line-height: 22px;
+              /* or 157% */
+
+              display: flex;
+              align-items: center;
+              letter-spacing: -0.001em;
+            "
+          >
+            {{ getNowDate(item.notification_added_date) | timeAgo }}
+          </span>
+        </p>
+      </ion-item>
+    </ion-col>
+    <ion-col size="12" style="text-align: center" *ngIf="isData">
+      <ion-button fill="clear" (click)="onIonInfinite()">
+        <p class="text-color">View more...</p>
+      </ion-button>
+    </ion-col>
+  </ion-row>
+</ion-grid>

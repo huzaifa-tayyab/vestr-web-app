@@ -1,0 +1,38 @@
+<ion-row>
+  <ion-col
+    size="12"
+    sizeSm="6"
+    *ngFor="let item of news; let i = index"
+    style="
+      border: 0.1px solid #b3b3b3;
+      border-left: none;
+      border-bottom: none;
+      border-top: none;
+      transform: matrix(1, 0, 0, 1, 0, 0);
+    "
+  >
+    <ion-item style="--background: transparent">
+      <ion-thumbnail
+        slot="end"
+        style="--border-radius: 5px"
+      >
+        <img [src]="item.banner_image" alt="logo{{ i }}" />
+      </ion-thumbnail>
+      <ion-label style="--color: none" class="ion-text-wrap">
+        <p
+          class="txt"
+          (click)="openUrl(item.url)"
+          style="font-size: 17px; font-weight: 600; cursor: pointer"
+        >
+          {{ item.title.length > 30
+            ? (item.title | slice : 0 : 30) + "..."
+            : item.title }}
+        </p>
+        <p *ngIf="item.summary">{{ item.summary.length > 65
+          ? (item.summary | slice : 0 : 65) + "..."
+          : item.summary }}</p>
+        <p>{{ getNowDate(item.UpdatedAt) | timeAgo }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-col>
+</ion-row>

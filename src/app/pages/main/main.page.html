@@ -1,0 +1,176 @@
+<ion-content [fullscreen]="true" class="over">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12 p-2 px-3 border-bottom">
+        <b class="title">Feed</b>
+      </div>
+      <div class="col-12 p-2 px-3 border-bottom" style="padding: 0 !important">
+        <ion-segment
+          [value]="feedType"
+          mode="md"
+          color="success"
+          style="justify-content: flex-start; grid-auto-columns: 50%"
+        >
+          <ion-segment-button
+            value="Following"
+            (click)="getFollow('Following')"
+          >
+            <ion-label class="lbl5" style="font-size: 15px"
+              ><b>Following</b></ion-label
+            >
+          </ion-segment-button>
+          <ion-segment-button
+            value="Everything"
+            (click)="getFollow('Everything')"
+          >
+            <ion-label class="lbl5" style="font-size: 15px"
+              ><b>Everything</b></ion-label
+            >
+          </ion-segment-button>
+        </ion-segment>
+      </div>
+      <div class="col-12 py-3 px-3 border-bottom">
+        <!-- <button
+          class="b-outline"
+          [ngClass]="{'g-text': sort_by=='most_recent'}"
+          (click)="getFeedData2('most_recent')"
+        >
+          Most recent</button
+        >&nbsp;
+        <button
+          class="b-outline"
+          [ngClass]="{'g-text': sort_by=='most_popular'}"
+          (click)="getFeedData2('most_popular')"
+        >
+          Most popular</button
+        >&nbsp;
+        <button
+          class="b-outline"
+          [ngClass]="{'g-text': sort_by=='most_comments'}"
+          (click)="getFeedData2('most_comments')"
+        >
+          Most comments</button
+        >&nbsp; -->
+        <!-- <ion-button
+          size="small"
+          style="text-transform: none; margin-top: -8px"
+          (click)="setItem3()"
+          shape="round"
+          color="success"
+          fill="outline"
+          >{{replaceString(post_genre)}}</ion-button
+        > -->
+
+        <label class="s-lbl">
+          <i class="fa-solid fa-chevron-down"></i>
+          <select
+            class="mainfeeddropdown"
+            style="
+              cursor: pointer;
+              border-radius: 20px;
+              font-size: 16px;
+              padding: 5px 35px;
+              margin-top: 5px;
+              background: transparent;
+              border: 1px solid #d3d3d3;
+              font-family: SF-Pro-Display-Medium;
+            "
+            [(ngModel)]="post_genre"
+            mode="ios"
+            #mySelect3
+            (change)="genre($event)"
+          >
+            <option value="all_post">All posts</option>
+            <option value="research">Research</option>
+            <option value="news">News</option>
+            <option value="generic">Generic</option>
+          </select></label
+        >
+        <label class="s-lbl">
+          <i class="fa-solid fa-chevron-down"></i>
+          <select
+            class="mainfeeddropdown"
+            style="
+              cursor: pointer;
+              border-radius: 20px;
+              border: 1px solid #d3d3d3;
+              font-size: 16px;
+              padding: 5px 35px;
+              margin-top: 5px;
+              background: transparent;
+              font-family: SF-Pro-Display-Medium;
+            "
+            [(ngModel)]="post_date_filter"
+            mode="ios"
+            #mySelect
+            (change)="getFeedData($event)"
+          >
+            <option value="today">Today</option>
+            <option value="1_month">1 month</option>
+            <option value="1_year">All time</option>
+          </select></label
+        >
+        <label class="s-lbl">
+          <i class="fa-solid fa-chevron-down"></i>
+          <select
+            class="mainfeeddropdown"
+            style="
+              cursor: pointer;
+              border-radius: 20px;
+              border: 1px solid #d3d3d3;
+              font-size: 16px;
+              padding: 5px 35px;
+              margin-top: 5px;
+              background: transparent;
+              font-family: SF-Pro-Display-Medium;
+            "
+            [(ngModel)]="sort_by"
+            mode="ios"
+            #mySelect2
+            (change)="getFeedData2($event)"
+          >
+            <option value="most_recent">Most recent</option>
+            <option value="most_popular">Most popular</option>
+            <option value="most_comments">Most comments</option>
+          </select>
+        </label>
+      </div>
+      <div class="col-12 py-3 px-3 border-bottom" *ngIf="items.length==0">
+        No posts found
+      </div>
+    </div>
+    <div class="row">
+      <div
+        *ngFor="let item of items ; let i=index;"
+        class="border-bottom col-12"
+      >
+        <app-feed
+          [item]="item"
+          [index]="i"
+          [readmore]="true"
+          [profile_image_path]="profile_image_path"
+          [vestLogin]="vestLogin"
+          [file_path]="file_path"
+          [postDetailsData]="postDetailsData"
+          (removeItem)="removeItem($event)"
+          (postDetails)="postDetails($event)"
+          (setVote)="setVote($event)"
+        ></app-feed>
+      </div>
+    </div>
+    <div class="row">
+      <div
+        class="col-12"
+        style="
+          border: 0.1px solid lightgray;
+          border-top: none;
+          text-align: center;
+        "
+      >
+        <ion-button fill="clear" (click)="onIonInfinite()">
+          <p class="text-color">View more...</p>
+        </ion-button>
+      </div>
+    </div>
+  </div>
+</ion-content>

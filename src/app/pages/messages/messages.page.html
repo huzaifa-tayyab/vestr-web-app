@@ -1,0 +1,351 @@
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col
+        size="12"
+        sizeSm="4"
+        id="header11"
+        style="
+          border: 0.1px solid #b3b3b3;
+          border-top: none;
+          border-right: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+          padding: 18px;
+        "
+      >
+        <ion-text
+          class="newshead"
+          style="
+            font-size: 22px;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 10px;
+          "
+        >
+          Messages
+        </ion-text>
+        <span style="float: right">
+          <ion-fab-button
+            color="success"
+            fill="outline"
+            style="height: 35px; width: 35px"
+          >
+            <ion-icon name="add"></ion-icon>
+          </ion-fab-button>
+        </span>
+      </ion-col>
+      <ion-col
+        size="12"
+        sizeSm="8"
+        id="header21"
+        class="ion-hide-sm-down"
+        style="
+          border: 0.1px solid #b3b3b3;
+          border-top: none;
+          border-right: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+          border-bottom: none;
+        "
+      >
+        <ion-row style="display: none" id="userheader1">
+          <ion-col size="12">
+            <ion-item
+              class="newshead"
+              style="
+                padding-top: 28px;
+                --background: transparent;
+                margin-bottom: 10px;
+                --border-style: none;
+                margin-top: -15px;
+              "
+            >
+              <ion-icon
+                slot="start"
+                class="ion-hide-sm-up"
+                (click)="setHeaderClass()"
+                style="font-size: 20px; cursor: pointer; margin-left: -20px"
+                name="arrow-back-outline"
+              ></ion-icon>
+              &nbsp;&nbsp;
+              <ion-avatar slot="start">
+                <img
+                  alt="Silhouette of mountains45"
+                  *ngIf="currentUser?.user.profile_image"
+                  src="{{profile_image_path}}{{currentUser?.user.profile_image}}"
+                />
+                <img
+                  alt="Silhouette of mountains45"
+                  *ngIf="!currentUser?.user.profile_image"
+                  src="assets/icon/dark.png"
+                />
+              </ion-avatar>
+              <ion-label>
+                <span
+                  style="
+                    font-size: 16px;
+                    font-weight: 600;
+                    --color: none !important;
+                  "
+                  >{{currentUser?.user.fname | titlecase}}
+                  {{currentUser?.user.lname | titlecase}}</span
+                ><br />
+                <span>@{{currentUser?.user.username}}</span>
+              </ion-label>
+              <ion-buttons slot="end" class="ion-hide-sm-down">
+                <ion-button
+                  fill="solid"
+                  shape="round"
+                  color="light"
+                  size="small"
+                >
+                  Joined
+                </ion-button>
+                &nbsp;
+                <ion-button
+                  fill="outline"
+                  shape="round"
+                  color="success"
+                  size="small"
+                >
+                  See details
+                </ion-button>
+              </ion-buttons>
+            </ion-item>
+          </ion-col>
+          <ion-col size="12" class="ion-hide-sm-up">
+            <ion-buttons style="margin-left: 40px">
+              <ion-button fill="solid" shape="round" color="light" size="small">
+                Joined
+              </ion-button>
+              &nbsp;
+              <ion-button
+                fill="outline"
+                shape="round"
+                color="success"
+                size="small"
+              >
+                See details
+              </ion-button>
+            </ion-buttons>
+          </ion-col>
+        </ion-row>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col
+        size="12"
+        sizeSm="4"
+        id="header31"
+        style="
+          padding: 0;
+          border: 0.1px solid #b3b3b3;
+          border-top: none;
+          border-bottom: none;
+          border-right: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+        "
+      >
+        <ion-searchbar
+          style="
+            --box-shadow: none;
+            --border-radius: 20px;
+            border-bottom: solid 0.1px lightgray;
+          "
+          [(ngModel)]="searchItem"
+          placeholder="Search name here "
+          [debounce]="1000"
+          (ionChange)="handleChange($event)"
+        ></ion-searchbar>
+        <ion-list
+          class="list-back-color"
+          lines="none"
+          style="
+            position: absolute;
+            z-index: 2;
+            width: 100%;
+            background-color: #f1f1f1 !important;
+            box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
+              rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+            max-height: 150px;
+            overflow: scroll;
+          "
+          *ngIf="searchItem"
+        >
+          <ion-item *ngFor="let result of results">
+            <ion-label style="cursor: pointer" (click)="goToDetails(result)"
+              >{{ result.fname }} {{result.lname}}</ion-label
+            >
+          </ion-item>
+        </ion-list>
+        <span
+          style="display: flex; justify-content: center; margin-top: 10px"
+          *ngIf="userList.length>0"
+        >
+          <ion-segment [value]="segmentValue" color="success">
+            <ion-segment-button
+              value="Primary"
+              (click)="segmentValue='Primary'"
+            >
+              <ion-label
+                class="newshead"
+                style="
+                  text-transform: none;
+                  font-family: 'SF Pro Display';
+                  font-style: normal;
+                  font-weight: 600;
+                  font-size: 16px;
+                  line-height: 19px;
+                  /* identical to box height */
+
+                  text-align: center;
+                  letter-spacing: -0.001em;
+                  display: inline-block;
+                "
+                >Primary</ion-label
+              >
+            </ion-segment-button>
+            <ion-segment-button value="Paid" (click)="segmentValue='Paid'">
+              <ion-label
+                class="newshead"
+                style="
+                  text-transform: none;
+                  font-family: 'SF Pro Display';
+                  font-style: normal;
+                  font-weight: 600;
+                  font-size: 16px;
+                  line-height: 19px;
+                  /* identical to box height */
+
+                  text-align: center;
+                  letter-spacing: -0.001em;
+                  display: inline-block;
+                "
+                >Paid</ion-label
+              >
+            </ion-segment-button>
+            <ion-segment-button value="Other" (click)="segmentValue='Other'">
+              <ion-label
+                class="newshead"
+                style="
+                  text-transform: none;
+                  font-family: 'SF Pro Display';
+                  font-style: normal;
+                  font-weight: 600;
+                  font-size: 16px;
+                  line-height: 19px;
+                  /* identical to box height */
+
+                  text-align: center;
+                  letter-spacing: -0.001em;
+                  display: inline-block;
+                "
+                >Other</ion-label
+              >
+            </ion-segment-button>
+          </ion-segment>
+        </span>
+        <div style="margin-left: 12px" *ngIf="userList.length>0">
+          <p style="font-size: 22px; font-weight: 500">Pinned</p>
+        </div>
+        <ion-list style="background: transparent; height: 85vh" lines="none">
+          <ion-item
+            style="
+              --background: transparent;
+              margin-bottom: 10px;
+              cursor: pointer;
+            "
+            [color]="item.isSelected ? 'success' : ''"
+            *ngFor="let item of userList; let i=index"
+          >
+            <ion-avatar slot="start" (click)="setHeaderClass2(item, i)">
+              <img
+                style="width: 50px"
+                alt="Silhouette of mountains{{i}}"
+                *ngIf="item.user?.profile_image"
+                src="{{profile_image_path}}{{item.user?.profile_image}}"
+              />
+              <img
+                style="width: 50px"
+                alt="Silhouette of mountains{{i}}"
+                *ngIf="!item.user?.profile_image"
+                src="assets/icon/dark.png"
+              /> </ion-avatar
+            >&nbsp;&nbsp;
+            <ion-label class="newshead" (click)="setHeaderClass2(item, i)">
+              <span
+                style="
+                  font-size: 16px;
+                  font-weight: 600;
+                  --color: none !important;
+                "
+                >{{item.user?.fname | titlecase}} {{item.user?.lname |
+                titlecase}} </span
+              ><br />
+              <span style="--color: none; white-space: normal"
+                >@{{item.user?.username}}
+              </span>
+            </ion-label>
+            <ion-badge
+              slot="end"
+              *ngIf="item.message_count>0"
+              color="danger"
+              mode="ios"
+              >{{item.message_count}}</ion-badge
+            >
+            <ion-icon
+              class="newshead"
+              name="ellipsis-vertical-outline"
+              slot="end"
+              id="click-trigger{{i}}"
+            ></ion-icon>
+            <ion-popover
+              trigger="click-trigger{{i}}"
+              triggerAction="click"
+              (didDismiss)="remoPop()"
+            >
+              <ng-template>
+                <ion-content class="">
+                  <ion-button
+                    style="float: left; padding: 0"
+                    (click)="presentAlert(item.user?.user_uid)"
+                    expand="block"
+                    fill="clear"
+                    shape="round"
+                    color="danger"
+                  >
+                    <ion-icon name="trash-outline"></ion-icon> &nbsp; Remove
+                  </ion-button>
+                </ion-content>
+              </ng-template>
+            </ion-popover>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+      <ion-col
+        size="12"
+        id="header41"
+        sizeSm="8"
+        class="ion-hide-sm-down"
+        style="
+          --background: transparent;
+          margin-bottom: 10px;
+          padding: 0;
+          border: 0.1px solid #b3b3b3;
+          border-top: none;
+          border-right: none;
+          border-bottom: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+        "
+      >
+        <span style="display: none" id="chatdiv1">
+          <app-chat
+            [currentUser]="currentUser"
+            [profile_image_path]="profile_image_path"
+            [userListMessage]="userListMessage"
+            *ngIf="currentUser"
+          ></app-chat>
+        </span>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

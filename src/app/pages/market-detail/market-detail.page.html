@@ -1,0 +1,713 @@
+<ion-content>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12 p-2 text-center py-3 px-3 border-bottom newshead">
+        <b>{{symbolName}}</b>
+        <div style="float: left; font-size: 18px" (click)="backClicked()">
+          <ion-icon
+            style="font-size: 28px"
+            name="arrow-back-outline"
+          ></ion-icon>
+          &nbsp;&nbsp;
+        </div>
+        <div style="float: right; font-size: 18px">
+          <button
+            class="btn-outlines newshead"
+            id="open-add-stocks{{symbolName}}"
+          >
+            Add to list
+          </button>
+          <ion-popover
+            trigger="open-add-stocks{{symbolName}}"
+            triggerAction="click"
+          >
+            <ng-template>
+              <ion-chip
+                *ngFor="let item of userCreateList; let i=index"
+                style="padding: 20px; border: none"
+                color="dark"
+                [outline]="true"
+                (click)="addStocksUserList(item.user_list_uid)"
+              >
+                <!-- <ion-icon name="thumbs-up" color="success"></ion-icon> -->
+                <ion-label>{{item.user_list_name}} </ion-label>
+              </ion-chip>
+            </ng-template>
+          </ion-popover>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ion-grid fixed>
+    <ion-row *ngIf="!symbolDetails">
+      <ion-col
+        size="12"
+        style="border-top: none; transform: matrix(1, 0, 0, 1, 0, 0)"
+      >
+        <ion-grid fixed>
+          <ion-row class="ion-justify-content-center">
+            <ion-col size-sm="6" size="12" style="text-align: center">
+              <h1>Stock not found</h1>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-col>
+    </ion-row>
+    <div *ngIf="symbolDetails">
+      <ion-row
+        style="
+          border-top: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+          padding: 15px;
+        "
+      >
+        <ion-col size="12">
+          <ion-icon
+            routerLink="/app/markets"
+            style="font-size: 21px; cursor: pointer; display: none"
+            name="arrow-back-outline"
+          ></ion-icon>
+
+          <span style="float: right">
+            <ion-popover trigger="open-like" triggerAction="click">
+              <ng-template>
+                <ion-chip
+                  *ngIf="allTrendingData?.is_liked=='no'"
+                  style="width: 100px; padding: 20px"
+                  color="success"
+                  [outline]="true"
+                  (click)="likeStock()"
+                >
+                  <ion-icon name="thumbs-up" color="success"></ion-icon>
+                </ion-chip>
+                <ion-chip
+                  *ngIf="allTrendingData?.is_liked=='yes'"
+                  style="width: 100px; padding: 20px"
+                  color="danger"
+                  [outline]="true"
+                  (click)="likeStock()"
+                >
+                  <ion-icon name="thumbs-down" color="danger"></ion-icon>
+                  <ion-label>Dislike</ion-label>
+                </ion-chip>
+              </ng-template>
+            </ion-popover>
+          </span>
+        </ion-col>
+        <ion-col size="12">
+          <ion-label class="newshead" style="font-size: 21px; font-weight: 600"
+            >{{symbolName}}</ion-label
+          >
+          <span style="float: right">
+            <ion-popover
+              trigger="open-add-stocks{{symbolName}}"
+              triggerAction="click"
+            >
+              <ng-template>
+                <ion-chip
+                  *ngFor="let item of userCreateList; let i=index"
+                  style="padding: 20px; border: none"
+                  color="dark"
+                  [outline]="true"
+                  (click)="addStocksUserList(item.user_list_uid)"
+                >
+                  <!-- <ion-icon name="thumbs-up" color="success"></ion-icon> -->
+                  <ion-label>{{item.user_list_name}}</ion-label>
+                </ion-chip>
+              </ng-template>
+            </ion-popover>
+          </span>
+        </ion-col>
+        <ion-col size="12" style="margin-top: 0px">
+          <ion-label
+            class="newshead"
+            style="font-size: 22px; font-weight: bold"
+          >
+            {{symbolState?.close | currency}}
+          </ion-label>
+        </ion-col>
+        <ion-col size="12" *ngIf="symbolState">
+          <ion-label
+            style="font-size: 17px; margin-bottom: 10px"
+            color="success"
+            *ngIf="getPercentage2(symbolState).key"
+            >{{symbolState?.change | number: '1.2-2'}}
+            ({{getPercentage2(symbolState).value | number: '1.2-2'}}%)
+            {{slotName}}</ion-label
+          >
+          <ion-label
+            style="font-size: 17px; margin-bottom: 10px"
+            color="danger"
+            *ngIf="!getPercentage2(symbolState).key"
+            >{{symbolState?.change | number: '1.2-2'}}
+            ({{getPercentage2(symbolState).value | number: '1.2-2'}}%)
+            {{slotName}}</ion-label
+          >
+        </ion-col>
+
+        <!-- <ion-col size="12">
+          <ion-button
+            *ngIf="allTrendingData?.is_added_to_graph=='no'"
+            (click)="graphStock()"
+            style="font-size: 17px"
+            fill="outline"
+            shape="round"
+            color="dark"
+          >
+            Add to graph
+          </ion-button>
+          <ion-button
+            *ngIf="allTrendingData?.is_added_to_graph=='yes'"
+            (click)="graphStock()"
+            style="font-size: 17px"
+            fill="outline"
+            shape="round"
+            color="dark"
+          >
+            Remove to graph
+          </ion-button>
+        </ion-col> -->
+        <ion-col size="12" *ngIf="symbolData.length>0">
+          <app-twelve-graph
+            [height]="250"
+            [type]="'stock'"
+            [index]="0"
+            [content]="true"
+            (changeAmount)="changeAmount($event)"
+            [duration]="duration"
+            [graphdata]="symbolData"
+          ></app-twelve-graph>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col
+          size="12"
+          style="
+            border-top: none;
+            transform: matrix(1, 0, 0, 1, 0, 0);
+            padding: 0 13px;
+          "
+        >
+          <div>
+            <ion-button
+              *ngFor="let item of timeSlot; let i=index"
+              color="dark"
+              [ngClass]="{'ionbasecolor': !item.color}"
+              [fill]="item.color ? 'solid' : 'clear'"
+              (click)="getGraph(item , i)"
+              >{{item.name}}</ion-button
+            >
+          </div>
+        </ion-col>
+      </ion-row>
+
+      <ion-row *ngIf="profileType=='Vestr+'">
+        <ion-col
+          size="12"
+          style="
+            border: 0.1px solid #b3b3b3;
+            border-top: none;
+            transform: matrix(1, 0, 0, 1, 0, 0);
+          "
+        >
+          <ion-grid fixed>
+            <ion-row class="ion-justify-content-center">
+              <ion-col size-sm="6" size="12" style="text-align: center">
+                <h1>Coming Soon</h1>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="profileType=='Public'">
+        <ion-col
+          style="
+            border: 0.1px solid #b3b3b3;
+            border-top: none;
+            transform: matrix(1, 0, 0, 1, 0, 0);
+          "
+          size="12"
+          style="
+            border: 0.1px solid #b3b3b3;
+            border-top: none;
+            transform: matrix(1, 0, 0, 1, 0, 0);
+          "
+        >
+          <ion-grid fixed>
+            <ion-row class="ion-justify-content-center">
+              <ion-col size-sm="6" size="12" style="text-align: center">
+                <h1>Coming Soon</h1>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="profileType=='Reports'">
+        <ion-col
+          size="12"
+          style="
+            border: 0.1px solid #b3b3b3;
+            border-top: none;
+            transform: matrix(1, 0, 0, 1, 0, 0);
+          "
+        >
+          <ion-grid fixed>
+            <ion-row class="ion-justify-content-center">
+              <ion-col size-sm="6" size="12" style="text-align: center">
+                <h1>Coming Soon</h1>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="profileType=='Compare'">
+        <ion-col
+          size="12"
+          style="
+            border: 0.1px solid #b3b3b3;
+            border-top: none;
+            transform: matrix(1, 0, 0, 1, 0, 0);
+          "
+        >
+          <ion-grid fixed>
+            <ion-row class="ion-justify-content-center">
+              <ion-col size-sm="6" size="12" style="text-align: center">
+                <h1>Coming Soon</h1>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-col>
+      </ion-row>
+      <div
+        *ngIf="profileType=='News'"
+        style="
+          border: 0.1px solid #b3b3b3;
+          border-top: none;
+          border-bottom: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+        "
+      >
+        <app-news [news]="cryptoNews?.feed"></app-news>
+      </div>
+      <ion-row *ngIf="profileType=='general'">
+        <ion-col
+          size="12"
+          style="border-top: none; transform: matrix(1, 0, 0, 1, 0, 0)"
+        >
+          <ion-grid fixed>
+            <ion-row>
+              <ion-col size="12" style="padding: 25px">
+                <p style="font-size: 21px; font-weight: 600">
+                  About {{symbolName}}
+                </p>
+                <p style="text-align: justify">
+                  {{symbolDetails?.description}}
+                </p>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col style="padding: 15px 25px">
+          <p style="font-size: 21px; font-weight: 600">Stats</p>
+        </ion-col>
+      </ion-row>
+
+      <ion-grid fixed>
+        <ion-row style="padding: 5px 25px">
+          <ion-col size="6" sizeSm="2">
+            <p style="font-size: 15px; color: #707070">Open</p>
+          </ion-col>
+          <ion-col size="6" sizeSm="2">
+            <p style="font-size: 15px; font-weight: 600">
+              {{symbolState?.open | currency}}
+            </p>
+          </ion-col>
+          <ion-col size="6" sizeSm="2">
+            <p style="font-size: 15px; color: #707070">Volume</p>
+          </ion-col>
+          <ion-col size="6" sizeSm="2">
+            <p style="font-size: 15px; font-weight: 600">
+              {{symbolState?.volume | currency}}M
+            </p>
+          </ion-col>
+          <ion-col size="6" sizeSm="2">
+            <p style="font-size: 15px; color: #707070">52 Wk High</p>
+          </ion-col>
+          <ion-col size="6" sizeSm="2">
+            <p style="font-size: 15px; font-weight: 600">
+              {{symbolState?.fifty_two_week?.high | currency}}
+            </p>
+          </ion-col>
+        </ion-row>
+        <ion-row style="padding: 5px 25px">
+          <ion-col size="6" sizeSm="2">
+            <p style="font-size: 15px; color: #707070">High</p>
+          </ion-col>
+          <ion-col size="6" sizeSm="2">
+            <p style="font-size: 15px; font-weight: 600">
+              {{symbolState?.high | currency}}
+            </p>
+          </ion-col>
+          <ion-col size="6" sizeSm="2">
+            <p style="font-size: 15px; color: #707070">Avg Volume</p>
+          </ion-col>
+          <ion-col size="6" sizeSm="2">
+            <p style="font-size: 15px; font-weight: 600">
+              {{symbolState?.average_volume}}
+            </p>
+          </ion-col>
+          <ion-col size="6" sizeSm="2">
+            <p style="font-size: 15px; color: #707070">52 Wk Low</p>
+          </ion-col>
+          <ion-col size="6" sizeSm="2">
+            <p style="font-size: 15px; font-weight: 600">
+              {{symbolState?.fifty_two_week?.low | currency}}
+            </p>
+          </ion-col>
+        </ion-row>
+        <ion-row style="padding: 5px 25px">
+          <ion-col size="6" sizeSm="2">
+            <p style="font-size: 15px; color: #707070">Low</p>
+          </ion-col>
+          <ion-col size="6" sizeSm="2">
+            <p style="font-size: 15px; font-weight: 600">
+              {{symbolState?.low | currency}}
+            </p>
+          </ion-col>
+          <ion-col size="6" sizeSm="2">
+            <p style="font-size: 15px; color: #707070">Mkt Cap</p>
+          </ion-col>
+          <ion-col size="6" sizeSm="2">
+            <p style="font-size: 15px; font-weight: 600">N/A</p>
+          </ion-col>
+          <ion-col size="6" sizeSm="2">
+            <p style="font-size: 15px; color: #707070">Div/Yield</p>
+          </ion-col>
+          <ion-col size="6" sizeSm="2">
+            <p style="font-size: 15px; font-weight: 600">N/A</p>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <ion-row
+        style="
+          border: 0.1px solid #b3b3b3;
+          border-top: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+          margin-top: 30px;
+        "
+        *ngIf="profileType=='general'"
+      >
+        <ion-col size="6" style="padding: 25px">
+          <p style="font-size: 21px; font-weight: 600" class="h">
+            Public sentiment - <span class="g-text">Bullish</span>
+          </p>
+        </ion-col>
+        <ion-col size="6" style="padding: 25px 0">
+          <p style="font-size: 21px; font-weight: 600" class="h">
+            Public buy rating:
+            <span style="color: #1dcf5b"
+              >{{allTrendingData?.average_rating}} - {{title}}</span
+            >
+          </p>
+        </ion-col>
+        <ion-col size="6" style="padding: 0 25px">
+          <ion-grid fixed>
+            <ion-row>
+              <ion-col
+                size="12"
+                sizeSm="3"
+                style="text-align: center; cursor: pointer"
+                (click)="voteStock('up')"
+              >
+                <span *ngIf="allTrendingData?.is_voted=='yes'">
+                  <ion-icon color="success" name="arrow-up"></ion-icon>
+
+                  <ion-label
+                    color="success"
+                    style="font-size: 14px; display: block"
+                    >Bullish</ion-label
+                  >
+                </span>
+                <span *ngIf="allTrendingData?.is_voted!='yes'">
+                  <ion-icon
+                    style="--ion-color-danger: lightgray"
+                    name="arrow-up"
+                  ></ion-icon>
+
+                  <ion-label
+                    style="--ion-color-danger: lightgray"
+                    style="font-size: 14px; display: block"
+                    >Bullish</ion-label
+                  >
+                </span>
+              </ion-col>
+              <ion-col size="12" sizeSm="6">
+                <br />
+                <ion-progress-bar
+                  [value]="getPercentageVote(allTrendingData?.total_up_vote,allTrendingData?.total_down_vote)"
+                  color="success"
+                  style="background: red"
+                ></ion-progress-bar>
+              </ion-col>
+              <ion-col
+                size="12"
+                sizeSm="3"
+                style="text-align: center; cursor: pointer"
+                (click)="voteStock('down')"
+              >
+                <span *ngIf="allTrendingData?.is_voted=='no'">
+                  <ion-icon color="danger" name="arrow-down"></ion-icon> <br />
+                  <ion-label color="danger" style="font-size: 14px"
+                    >Bearish</ion-label
+                  >
+                </span>
+                <span *ngIf="allTrendingData?.is_voted!='no'">
+                  <ion-icon
+                    style="--ion-color-danger: lightgray"
+                    name="arrow-down"
+                  ></ion-icon
+                  ><br />
+
+                  <ion-label
+                    style="--ion-color-danger: lightgray"
+                    style="font-size: 14px"
+                    >Bearish</ion-label
+                  >
+                </span>
+              </ion-col>
+            </ion-row>
+            <ion-row style="text-align: center">
+              <ion-col size="12" sizeSm="3">
+                <p style="font-size: 13px; color: #707070">
+                  {{allTrendingData?.total_up_vote}} votes
+                  ({{getPercentageRating2(allTrendingData?.total_up_vote,
+                  allTrendingData?.total_down_vote) | number : '1.1-1'}}%)
+                </p>
+              </ion-col>
+              <ion-col size="12" sizeSm="6"> </ion-col>
+              <ion-col size="12" sizeSm="3">
+                <p style="font-size: 13px; color: #707070">
+                  {{allTrendingData?.total_down_vote}} votes
+                  ({{getPercentageRating2(allTrendingData?.total_down_vote,
+                  allTrendingData?.total_up_vote) | number : '1.1-1'}}%)
+                </p>
+              </ion-col>
+            </ion-row>
+            <!-- <ion-row>
+              <ion-col size="12">
+                <button class="g-outline">Bullish</button>
+                <button class="g-fill">Save</button>
+              </ion-col>
+            </ion-row> -->
+          </ion-grid>
+        </ion-col>
+
+        <ion-col size-="6">
+          <ion-row
+            *ngIf="profileType=='general'"
+            style="
+              border-top: none;
+              border-bottom: none;
+              transform: matrix(1, 0, 0, 1, 0, 0);
+            "
+          >
+            <ion-col size="12">
+              <ion-row style="padding-right: 25px">
+                <ion-col size="12">
+                  <ion-row>
+                    <ion-col size="4">
+                      <p style="color: #1dcf5b" class="s">
+                        Strong Buy
+                        <span style="color: #000; font-size: 14px" class="p">
+                          {{allTrendingData?.strong_buy_rating_percent | number
+                          : '1.1-1'}}%</span
+                        >
+                      </p>
+                    </ion-col>
+                    <ion-col
+                      size="8"
+                      style="display: flex; align-items: center"
+                    >
+                      <ion-progress-bar
+                        color="success"
+                        [value]="getPercentageRating(allTrendingData?.strong_buy_rating_percent)"
+                      ></ion-progress-bar>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row style="margin-top: 10px">
+                    <ion-col size="4">
+                      <p style="color: #050505" class="s">
+                        Buy
+                        <span style="color: #000" class="p"
+                          >{{allTrendingData?.buy_rating_percent | number :
+                          '1.1-1'}}%</span
+                        >
+                      </p>
+                    </ion-col>
+                    <ion-col
+                      size="8"
+                      style="display: flex; align-items: center"
+                    >
+                      <ion-progress-bar
+                        [value]="getPercentageRating(allTrendingData?.buy_rating_percent)"
+                        color="success"
+                      ></ion-progress-bar>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row style="margin-top: 10px">
+                    <ion-col size="4">
+                      <p style="color: #000" class="s">
+                        Hold
+                        <span style="color: #000" class="p"
+                          >{{allTrendingData?.hold_rating_percent | number :
+                          '1.1-1'}}%</span
+                        >
+                      </p>
+                    </ion-col>
+                    <ion-col
+                      size="8"
+                      style="display: flex; align-items: center"
+                    >
+                      <ion-progress-bar
+                        color="success"
+                        [value]="getPercentageRating(allTrendingData?.hold_rating_percent)"
+                      ></ion-progress-bar>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row style="margin-top: 10px">
+                    <ion-col size="4">
+                      <p style="color: #000" class="s">
+                        Sell
+                        <span style="color: #000" class="p"
+                          >{{allTrendingData?.sell_rating_percent | number :
+                          '1.1-1'}}%</span
+                        >
+                      </p>
+                    </ion-col>
+                    <ion-col
+                      size="8"
+                      style="display: flex; align-items: center"
+                    >
+                      <ion-progress-bar
+                        color="success"
+                        [value]="getPercentageRating(allTrendingData?.sell_rating_percent)"
+                      ></ion-progress-bar>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row style="margin-top: 10px">
+                    <ion-col size="4">
+                      <p style="color: #000" class="s">
+                        Strong Sell
+                        <span style="color: #000" class="p"
+                          >{{allTrendingData?.strong_sell_percent | number :
+                          '1.1-1'}}%</span
+                        >
+                      </p>
+                    </ion-col>
+                    <ion-col
+                      size="8"
+                      style="display: flex; align-items: center"
+                    >
+                      <ion-progress-bar
+                        color="success"
+                        style="background: transparent"
+                        [value]="getPercentageRating(allTrendingData?.strong_sell_percent)"
+                      ></ion-progress-bar>
+                    </ion-col>
+                  </ion-row>
+                </ion-col>
+                <ion-col size="12">
+                  <ion-row>
+                    <ion-col size="12">
+                      <p
+                        class="p"
+                        style="
+                          margin-left: 0px;
+                          margin-top: 10px;
+                          color: #b3b3b3;
+                        "
+                      >
+                        What’s your rating?
+                      </p>
+                    </ion-col>
+                    <ion-col size="12">
+                      <select
+                        [(ngModel)]="rating"
+                        aria-label="rating"
+                        interface="popover"
+                        color="success"
+                        style="
+                          border: 1px solid #1dcf5b;
+                          border-radius: 20px;
+                          float: left;
+                          color: #1dcf5b;
+                          font-size: 12px;
+                          padding: 8px;
+                          margin-top: 5px;
+                          background: transparent;
+                        "
+                      >
+                        <option value="">Rate Stock</option>
+                        <option value="1">1 - Strong Sell</option>
+                        <option value="2">2 - Sell</option>
+                        <option value="3">3 - Hold</option>
+                        <option value="4">4 - Buy</option>
+                        <option value="5">5 - Strong Buy</option>
+                      </select>
+                      <button
+                        class="g-fill"
+                        [disabled]="!rating"
+                        (click)="rateStock()"
+                      >
+                        Save
+                      </button>
+                    </ion-col>
+                  </ion-row>
+                </ion-col>
+              </ion-row>
+            </ion-col>
+          </ion-row>
+        </ion-col>
+
+        <ion-col size="12" style="padding-top: 30px">
+          <ion-row>
+            <ion-col size="12" style="padding: 25px; padding-bottom: 0">
+              <p style="font-size: 21px; font-weight: 600" class="h">
+                News about {{symbolName | titlecase}}
+              </p>
+            </ion-col>
+          </ion-row>
+          <ion-row
+            style="padding: 0 25px"
+            *ngFor="let item of symbolNews; let i=index"
+            class="checkhover"
+          >
+            <ion-col
+              (click)="openUrl(item.news_url)"
+              size="12"
+              style="
+                border-bottom: 1px solid #b3b3b3;
+                padding-bottom: 15px;
+                padding-top: 15px;
+              "
+            >
+              <p style="font-size: 21px; font-weight: 600" class="h">
+                {{ item.title }}
+              </p>
+              <p style="margin-top: 15px">
+                {{ item.text.length > 500 ? (item.text | slice : 0 : 500) +
+                "..." : item.text }}
+              </p>
+              <p style="font-size: 14px; color: #b3b3b3; margin-top: 15px">
+                {{ item.date | date }} - {{item.source_name}}
+              </p>
+            </ion-col>
+          </ion-row>
+        </ion-col>
+      </ion-row>
+    </div>
+  </ion-grid>
+</ion-content>

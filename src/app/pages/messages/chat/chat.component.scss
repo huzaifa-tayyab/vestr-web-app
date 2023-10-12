@@ -1,0 +1,13 @@
+
+ion-content {
+  --offset-bottom: 0px !important;
+  --overflow: scroll;
+  overflow: auto;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+ion-textarea{
+    --overflow: hidden;
+    overflow: hidden;
+}

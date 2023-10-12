@@ -1,0 +1,685 @@
+<ion-content>
+  <ion-grid fixed>
+    <ion-row>
+      <ion-col
+        size="12"
+        sizeSm="4"
+        id="header1"
+        style="
+          border: 0.1px solid #b3b3b3;
+          border-top: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+          padding: 15px 18px 10px 18px;
+        "
+      >
+        <ion-text
+          class="rooms-head"
+          style="
+            font-style: normal;
+            font-weight: 600;
+            font-size: 19px;
+            line-height: 28px;
+            /* or 127% */
+
+            display: inline-block;
+            align-items: center;
+            letter-spacing: -0.001em;
+            display: inline-block;
+            margin-top: 0;
+          "
+        >
+          Rooms
+        </ion-text>
+        <span style="float: right">
+          <ion-fab-button
+            class="main-button"
+            *ngIf="vestLogin"
+            routerLink="/app/create-room"
+            fill="outline"
+            color="light"
+            style="
+              height: 35px;
+              width: 35px;
+              background-color: #fff;
+              border: 1px solid #080808;
+              border-radius: 100%;
+            "
+          >
+            <ion-icon name="add" style="color: black"></ion-icon>
+          </ion-fab-button>
+        </span>
+      </ion-col>
+      <ion-col
+        size="12"
+        sizeSm="8"
+        id="header2"
+        class="ion-hide-sm-down"
+        style="
+          border: 0.1px solid lightgray;
+          border-top: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+          background-color: #1dcf5b;
+        "
+      >
+        <ion-row>
+          <ion-col size="12" sizeSm="6">
+            <ion-item
+              style="
+                --background: transparent;
+                margin-bottom: 10px;
+                --border-style: none;
+                margin-bottom: 0;
+              "
+            >
+              <ion-icon
+                slot="start"
+                class="ion-hide-sm-up"
+                (click)="setHeaderClass()"
+                style="font-size: 20px; cursor: pointer; margin-left: -20px"
+                name="arrow-back-outline"
+              ></ion-icon>
+              &nbsp;&nbsp;
+              <ion-avatar slot="start" style="margin: 15px 5px">
+                <img
+                  *ngIf="!itemsDetails?.image_name"
+                  alt="Silhouette of mountains"
+                  src="assets/icon/dark.png"
+                />
+                <img
+                  *ngIf="itemsDetails?.image_name"
+                  src="{{room_image_path}}{{itemsDetails?.image_name}}"
+                  alt="details"
+                />
+              </ion-avatar>
+              <ion-label>
+                <span
+                  style="
+                    font-size: 17px;
+                    font-weight: 600;
+                    color: #fff !important;
+                  "
+                  >{{itemsDetails?.name}}</span
+                ><br />
+                <span style="color: #fff !important"
+                  >{{itemsDetails?.username}}</span
+                >
+              </ion-label>
+            </ion-item>
+          </ion-col>
+          <ion-col size="12" sizeSm="6" style="text-align: center">
+            <ion-button
+              style="margin-top: 15px"
+              fill="outline"
+              (click)="joinRoom(itemsDetails?.room_uid)"
+              shape="round"
+              color="light"
+              size="small"
+              *ngIf="is_joined==0"
+            >
+              Join Room
+            </ion-button>
+            <ion-button
+              (click)="joinRoom(itemsDetails?.room_uid)"
+              style="margin-top: 15px"
+              fill="solid"
+              shape="round"
+              color="danger"
+              size="small"
+              *ngIf="is_joined==1"
+            >
+              Leave
+            </ion-button>
+            &nbsp;
+            <ion-button
+              (click)="setOpen1(true)"
+              style="margin-top: 15px"
+              fill="outline"
+              shape="round"
+              color="light"
+              size="small"
+            >
+              Show more
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col
+        size="12"
+        sizeSm="4"
+        id="header3"
+        style="
+          padding: 0;
+          border: 0.1px solid lightgray;
+          height: 120vh;
+          border-top: none;
+          border-bottom: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+        "
+      >
+        <div
+          style="
+            border-bottom: 1px solid rgb(213, 213, 213);
+            text-align: center;
+          "
+        >
+          <button
+            class="out-bnt"
+            [ngClass]="{'active-btn': segmentValue=='joined'}"
+            (click)="getJoinRoomList()"
+          >
+            Joined
+          </button>
+          <button
+            class="out-bnt"
+            [ngClass]="{'active-btn': segmentValue=='hot'}"
+            (click)="getRoomList()"
+          >
+            Popular
+          </button>
+        </div>
+        <!-- <span style="display: flex; justify-content: center; margin-top: 10px">
+          <ion-segment [value]="segmentValue" color="success">
+            <ion-segment-button value="joined" (click)="getJoinRoomList()">
+              <ion-label
+                style="
+                  text-transform: none;
+                  font-family: 'SF Pro Display';
+                  font-style: normal;
+                  font-weight: 600;
+                  font-size: 17px;
+                  line-height: 19px;
+                  /* identical to box height */
+
+                  text-align: center;
+                  letter-spacing: -0.001em;
+                  display: inline-block;
+                "
+                >Joined</ion-label
+              >
+            </ion-segment-button>
+            <ion-segment-button value="hot" (click)="getRoomList()">
+              <ion-label
+                style="
+                  text-transform: none;
+                  font-family: 'SF Pro Display';
+                  font-style: normal;
+                  font-weight: 600;
+                  font-size: 17px;
+                  line-height: 19px;
+                  /* identical to box height */
+
+                  text-align: center;
+                  letter-spacing: -0.001em;
+                  display: inline-block;
+                "
+                >Popular</ion-label
+              >
+            </ion-segment-button>
+          </ion-segment>
+        </span> -->
+
+        <ion-list
+          style="background: transparent"
+          lines="none"
+          *ngIf="segmentValue=='joined'"
+        >
+          <ion-item
+            *ngFor="let item of items; let i=index"
+            style="
+              --background: transparent;
+              margin-bottom: 0px;
+              cursor: pointer;
+              border-bottom: 1px solid rgb(212, 212, 212);
+            "
+            [color]="item.isSelected ? 'success' : ''"
+          >
+            <ion-avatar
+              class="s2 my-4"
+              slot="start"
+              style="width: 55px; height: 55px"
+              (click)="setHeaderClass2(i,item.room.room_uid, item.roomuser.user_uid)"
+            >
+              <img
+                style="width: 80px"
+                alt="Silhouette of mountains"
+                src="{{room_image_path}}{{item.room.image_name}}"
+              />
+            </ion-avatar>
+            <ion-label
+              (click)="setHeaderClass2(i,item.room.room_uid, item.room.user.user_uid)"
+            >
+              <span
+                style="font-size: 17px; font-weight: 600; margin-left: 15px"
+                class="room-lbl"
+              >
+                &nbsp;{{item.room.name}}</span
+              ><br />
+              <span class="member" style="margin-left: 16px"
+                >{{item.room.total_users}} members</span
+              >
+            </ion-label>
+            <ion-icon
+              *ngIf="item.room.user.user_uid==vestLogin?.user_uid"
+              name="ellipsis-horizontal"
+              slot="end"
+              id="click-trigger{{i}}"
+            ></ion-icon>
+            <ion-popover
+              trigger="click-trigger{{i}}"
+              triggerAction="click"
+              (didDismiss)="remoPop()"
+            >
+              <ng-template>
+                <ion-content class="ion-padding">
+                  <ion-button
+                    (click)="setOpen(item.room.room_uid)"
+                    style="float: left"
+                    expand="block"
+                    fill="clear"
+                    shape="round"
+                  >
+                    <ion-icon name="create-outline"></ion-icon> &nbsp; Edit
+                  </ion-button>
+                  <ion-button
+                    style="float: left"
+                    (click)="presentAlert(item.room.room_uid)"
+                    expand="block"
+                    fill="clear"
+                    shape="round"
+                    color="danger"
+                  >
+                    <ion-icon name="trash-outline"></ion-icon> &nbsp; Remove
+                  </ion-button>
+                </ion-content>
+              </ng-template>
+            </ion-popover>
+          </ion-item>
+        </ion-list>
+        <ion-list
+          style="background: transparent"
+          lines="none"
+          *ngIf="segmentValue=='hot'"
+        >
+          <ion-item
+            *ngFor="let item of items; let i=index"
+            style="
+              --background: transparent;
+              margin-bottom: 0px;
+              cursor: pointer;
+              border-bottom: 1px solid rgb(212, 212, 212);
+            "
+            [color]="item.isSelected ? 'success' : ''"
+          >
+            <ion-avatar
+              class="s2 my-4"
+              slot="start"
+              (click)="setHeaderClass2(i,item.room_uid, '')"
+              style="width: 55px; height: 55px"
+            >
+              <img
+                style="width: 80px"
+                alt="Silhouette of mountains"
+                src="{{room_image_path}}{{item.image_name}}"
+              />
+            </ion-avatar>
+            <ion-label (click)="setHeaderClass2(i,item.room_uid, '')">
+              <!-- <span
+                style="
+                  height: 10px;
+                  width: 10px;
+                  background: #1dcf5b;
+                  border-radius: 50px;
+                  display: block;
+                  float: left;
+                  margin-top: 5px;
+                "
+                *ngIf="item.is_verified == 1"
+              ></span
+              >&nbsp; -->
+              <span
+                style="font-size: 17px; font-weight: 600; margin-left: 15px"
+                class="room-lbl"
+              >
+                {{item.name}}</span
+              ><br />
+              <span class="member" style="margin-left: 15px"
+                >{{item.total_users}} members</span
+              >
+            </ion-label>
+            <!-- <ion-icon
+              *ngIf="item.user.user_uid==vestLogin?.user_uid"
+              name="ellipsis-horizontal"
+              slot="end"
+              id="click-trigger{{i}}"
+            ></ion-icon>
+            <ion-popover
+              trigger="click-trigger{{i}}"
+              triggerAction="click"
+              (didDismiss)="remoPop()"
+            >
+              <ng-template>
+                <ion-content class="ion-padding">
+                  <ion-button
+                    (click)="setOpen(item.room_uid)"
+                    style="float: left"
+                    expand="block"
+                    fill="clear"
+                    shape="round"
+                  >
+                    <ion-icon name="create-outline"></ion-icon> &nbsp; Edit
+                  </ion-button>
+                  <ion-button
+                    style="float: left"
+                    (click)="presentAlert(item.room_uid)"
+                    expand="block"
+                    fill="clear"
+                    shape="round"
+                    color="danger"
+                  >
+                    <ion-icon name="trash-outline"></ion-icon> &nbsp; Remove
+                  </ion-button>
+                </ion-content>
+              </ng-template>
+            </ion-popover> -->
+          </ion-item>
+        </ion-list>
+      </ion-col>
+      <ion-col
+        size="12"
+        id="header4"
+        sizeSm="8"
+        class="ion-hide-sm-down"
+        style="
+          border: solid 0.1px lightgray;
+          border-top: none;
+          border-bottom: none;
+          border-left: none;
+          transform: matrix(1, 0, 0, 1, 0, 0);
+        "
+      >
+        <app-chat-room
+          *ngIf="currentRoomUid"
+          [sort_by]="sort_by"
+          [roomDetails]="roomDetails"
+          [room_uid]="currentRoomUid"
+          [room_post_path]="room_post_path"
+          [profile_image_path]="profile_image_path"
+          [currentRoomUid]="currentRoomUid"
+          [currentUserid]="currentUserid"
+          [getScreenHeight]="getScreenHeight"
+          [is_joined]="is_joined"
+        ></app-chat-room>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+<ion-modal [isOpen]="isShowMore" (willDismiss)="cancel()">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar style="--background: transparent">
+        <ion-buttons slot="start">
+          <ion-button color="danger" (click)="cancel()">X</ion-button>
+        </ion-buttons>
+        <ion-title>Room details</ion-title>
+        <ion-buttons
+          slot="end"
+          *ngIf="itemsDetails.user?.user_uid==vestLogin?.user_uid"
+        >
+          <ion-button
+            (click)="setOpen(itemsDetails.room_uid)"
+            style="float: left"
+            expand="block"
+            color="success"
+            fill="clear"
+            shape="round"
+          >
+            <ion-icon name="create-outline"></ion-icon> &nbsp; Edit
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <ion-grid fixed>
+        <ion-row>
+          <ion-col size="6" sizeSm="3" style="margin-top: -20px">
+            <p class="s">Descriptions:</p>
+          </ion-col>
+          <ion-col size="6" sizeSm="9" style="margin-top: -20px">
+            <p class="s">{{itemsDetails.description}}</p>
+          </ion-col>
+          <ion-col size="6" sizeSm="3" style="margin-top: -20px">
+            <p class="s">Number of members:</p>
+          </ion-col>
+          <ion-col size="6" sizeSm="9" style="margin-top: -20px">
+            <p class="s" *ngIf="!seeUser">
+              {{itemsDetails.room_user.length}}<span
+                (click)="seeUser=true"
+                style="cursor: pointer"
+                class="userlist"
+              >
+                &nbsp;see users</span
+              >
+            </p>
+            <span *ngIf="seeUser">
+              <p
+                style="float: left"
+                class="s"
+                *ngFor="let user of itemsDetails.room_user; let i=index;let last = last"
+              >
+                <span *ngIf="!last"
+                  >{{user.user.fname}} {{user.user.lname}},&nbsp;
+                </span>
+                <span *ngIf="last"
+                  >{{user.user.fname}} {{user.user.lname}}
+                  <span
+                    class="userlist"
+                    (click)="seeUser=false"
+                    style="cursor: pointer"
+                  >
+                    &nbsp;hide users</span
+                  ></span
+                >
+              </p>
+            </span>
+          </ion-col>
+          <ion-col size="6" sizeSm="3" style="margin-top: -20px">
+            <p class="s">Creator:</p>
+          </ion-col>
+          <ion-col size="6" sizeSm="9" style="margin-top: -20px">
+            <p
+              class="s owner"
+              style="cursor: pointer"
+              (click)="cancel()"
+              routerLink="/app/profile/{{itemsDetails.user.user_uid}}"
+            >
+              {{itemsDetails.user.fname}} {{itemsDetails.user.lname}}
+            </p>
+          </ion-col>
+          <ion-col size="6" sizeSm="3" style="margin-top: -20px">
+            <p class="s">Room type:</p>
+          </ion-col>
+          <ion-col size="6" sizeSm="9" style="margin-top: -20px">
+            <p class="s">
+              <span *ngIf="itemsDetails.room_privacy==1">Public</span>
+              <span *ngIf="itemsDetails.room_privacy==2">Private</span>
+            </p>
+          </ion-col>
+          <ion-col size="10" style="margin-top: -20px">
+            <p class="s" (click)="copyMessage(userinput)">
+              Room URL :
+              <input
+                style="
+                  background: none;
+                  border: none;
+                  width: 100%;
+                  cursor: pointer;
+                  outline: none;
+                "
+                type="text"
+                readonly
+                [value]="roomPath"
+                #userinput
+              />
+            </p>
+          </ion-col>
+          <ion-col size="2" style="margin-top: -20px">
+            <ion-button
+              style="margin-top: 15px"
+              (click)="copyMessage(userinput)"
+              expand="block"
+              color="success"
+              fill="outline"
+              shape="round"
+            >
+              &nbsp; Copy
+            </ion-button>
+          </ion-col>
+          <ion-col size="12" style="margin-top: -20px">
+            <p class="s">Posts today</p>
+          </ion-col>
+          <ion-col size="12" style="margin-top: -20px">
+            <ion-list
+              style="background: transparent; margin-left: -4px"
+              lines="none"
+            >
+              <p class="s" *ngIf="todaysPost.length==0">Records not found.</p>
+              <ion-item
+                style="
+                  --background: transparent;
+                  margin-bottom: 10px;
+                  padding: 0;
+                  border: 0.1px solid #b3b3b3;
+                  border-left: none;
+                  border-top: none;
+                  border-right: none;
+                  transform: matrix(1, 0, 0, 1, 0, 0);
+                "
+                *ngFor="let item of todaysPost; let i = index"
+              >
+                <ion-avatar
+                  slot="start"
+                  style="position: absolute; top: 0; left: 10px"
+                  routerLink="/app/profile/{{ item?.user.user_uid }}"
+                >
+                  <img
+                    style="position: absolute; width: 50px"
+                    alt="Silhouette of mountains{{ i }}"
+                    *ngIf="item.user.profile_image"
+                    src="{{ profile_image_path }}{{ item.user.profile_image }}"
+                  />
+                  <img
+                    style="position: absolute; width: 50px"
+                    alt="Silhouette of mountains{{ i }}"
+                    *ngIf="!item.user.profile_image"
+                    src="assets/icon/dark.png"
+                  />
+                </ion-avatar>
+                <ion-label
+                  style="margin-left: 55px; margin-bottom: 10px !important"
+                >
+                  <span
+                    routerLink="/app/profile/{{ item?.user.user_uid }}"
+                    style="
+                      cursor: pointer;
+
+                      font-style: normal;
+                      font-weight: 600;
+                      font-size: 17px;
+                      line-height: 22px;
+                      /* or 138% */
+
+                      letter-spacing: -0.001em;
+                      --color: none !important;
+                    "
+                  >
+                    &nbsp;{{ item.user.fname }} {{ item.user.lname }} @{{
+                    item.user.username }} . {{ getNowDate(item.modified_date) |
+                    timeAgo }}
+                  </span>
+
+                  <span
+                    style="float: right; margin-left: 5px; text-align: center"
+                  >
+                    <ion-icon
+                      name="arrow-up"
+                      style="cursor: pointer; color: lightgray"
+                      (click)="setVote(item.rp_uid, 'up', item, i)"
+                    ></ion-icon
+                    ><br />
+                    <span style="cursor: pointer; color: lightgray"
+                      >{{ item.total_down_vote + item.total_up_vote }}</span
+                    >
+                    <br /><ion-icon
+                      name="arrow-down"
+                      (click)="setVote(item.rp_uid, 'down', item, i)"
+                      style="cursor: pointer; color: lightgray"
+                    ></ion-icon>
+                  </span>
+                  <ion-button
+                    *ngIf="this.vestLogin.user_uid == item.user.user_uid"
+                    style="float: right"
+                    (click)="removeUser(item.rp_uid, i)"
+                    expand="block"
+                    fill="clear"
+                    shape="round"
+                    color="danger"
+                  >
+                    <ion-icon name="trash-outline"></ion-icon>
+                  </ion-button>
+
+                  <br />
+                  <span
+                    style="
+                      margin-left: 3px;
+                      margin-bottom: 10px;
+                      --color: none;
+
+                      font-style: normal;
+                      font-weight: 500;
+                      font-size: 17px;
+                      line-height: 22px;
+                      /* or 138% */
+
+                      letter-spacing: -0.001em;
+                    "
+                    [innerHTML]="item.text"
+                  >
+                  </span>
+                  <br />
+                  <div *ngIf="item.type == 'image'" style="text-align: center">
+                    <img
+                      style="height: 240px"
+                      src="{{ room_post_path }}{{ item.filename }}"
+                      alt="file"
+                    />
+                  </div>
+                  <div *ngIf="item.type == 'video'" style="text-align: center">
+                    <video
+                      src="{{ room_post_path }}{{ item.filename }}"
+                      width="300"
+                      height="200"
+                      controls
+                    ></video>
+                  </div>
+                  <div *ngIf="item.type == 'audio'" style="text-align: center">
+                    <video
+                      src="{{ room_post_path }}{{ item.filename }}"
+                      width="300"
+                      height="60"
+                      controls
+                    ></video>
+                  </div>
+                </ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-content>
+    <ion-footer style="z-index: -1">
+      <ion-toolbar style="--background: transparent"> </ion-toolbar>
+    </ion-footer>
+  </ng-template>
+</ion-modal>

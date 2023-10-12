@@ -1,0 +1,152 @@
+<ion-content
+  [ngStyle]="{ height: isMobile ? '68vh' : 'height' ? '75vh' : null }"
+>
+  <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)" position="top">
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+  <ion-list style="background: transparent; margin-left: -4px" lines="none">
+    <ion-row *ngFor="let item of userListMessage; let i = index">
+      <ion-col
+        size="12"
+        sizeSm="9"
+        class="message other-message"
+        *ngIf="item.from_user.user_uid !== vestLogin.user_uid"
+      >
+        <ion-item
+          class="newshead"
+          style="--background: transparent; margin-bottom: 10px; padding: 0"
+        >
+          <ion-avatar slot="start" style="position: absolute; bottom: 0">
+            <img
+              alt="Silhouette of mountains{{ i }}"
+              *ngIf="item.from_user?.profile_image"
+              src="{{ profile_image_path }}{{ item.from_user.profile_image }}"
+            />
+            <img
+              alt="Silhouette of mountains{{ i }}"
+              *ngIf="!item.from_user?.profile_image"
+              src="assets/icon/dark.png"
+            />
+          </ion-avatar>
+          <ion-label
+            style="
+              border: 0.1px solid #b3b3b3;
+              background: #b3b3b326;
+              border-radius: 20px 20px 20px 0px;
+              padding: 15px;
+              margin-left: 50px;
+            "
+          >
+            <span
+              class="chat-output"
+              style="--color: none; white-space: normal"
+              >{{ item.message }}</span
+            >
+          </ion-label>
+          <ion-icon
+            class="newshead"
+            name="ellipsis-horizontal-outline"
+            slot="end"
+            id="click-triggerin{{ i }}"
+          ></ion-icon>
+          <ion-popover
+            trigger="click-triggerin{{ i }}"
+            triggerAction="click"
+            (didDismiss)="remoPop()"
+          >
+            <ng-template>
+              <ion-content class="ion-padding">
+                <ion-button
+                  style="float: left"
+                  (click)="presentAlert(item.message_uid)"
+                  expand="block"
+                  fill="clear"
+                  shape="round"
+                  color="danger"
+                >
+                  <ion-icon name="trash-outline"></ion-icon> &nbsp; Remove
+                </ion-button>
+              </ion-content>
+            </ng-template>
+          </ion-popover>
+        </ion-item>
+      </ion-col>
+      <ion-col
+        offset="3"
+        id="scrolldown{{ i }}"
+        size="9"
+        class="message my-message"
+        *ngIf="item.from_user.user_uid == vestLogin.user_uid"
+      >
+        <ion-item
+          class="newshead"
+          style="--background: transparent; margin-bottom: 10px; padding: 0"
+        >
+          <ion-label
+            style="
+              border: 0.1px solid #b3b3b3;
+              border-radius: 20px 20px 0px 20px;
+              padding: 15px;
+            "
+          >
+            <span style="--color: none; white-space: normal">{{
+              item.message
+            }}</span>
+          </ion-label>
+          <ion-icon
+            class="newshead"
+            name="ellipsis-horizontal-outline"
+            slot="end"
+            id="click-triggerin{{ i }}"
+          ></ion-icon>
+          <ion-popover
+            trigger="click-triggerin{{ i }}"
+            triggerAction="click"
+            (didDismiss)="remoPop()"
+          >
+            <ng-template>
+              <ion-content class="ion-padding">
+                <ion-button
+                  style="float: left"
+                  (click)="presentAlert(item.message_uid)"
+                  expand="block"
+                  fill="clear"
+                  shape="round"
+                  color="danger"
+                >
+                  <ion-icon name="trash-outline"></ion-icon> &nbsp; Remove
+                </ion-button>
+              </ion-content>
+            </ng-template>
+          </ion-popover>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+  </ion-list>
+</ion-content>
+<ion-footer id="footer">
+  <ion-item
+    lines="none"
+    style="transform: matrix(1, 0, 0, 1, 0, 0); --background: transparent"
+  >
+    <ion-textarea
+      class="newshead"
+      #chatInput
+      [(ngModel)]="text"
+      style="color: none"
+      clearInput="true"
+      placeholder="Write something..."
+    >
+    </ion-textarea>
+    <ion-button
+      color="success"
+      [disabled]="!text"
+      (click)="onsubmit()"
+      size="default"
+      fill="clear"
+      slot="end"
+    >
+      Send
+    </ion-button>
+  </ion-item>
+</ion-footer>

@@ -1,0 +1,8 @@
+<highcharts-chart
+  id="multicontainergraph{{ index }}"
+  *ngIf="showGraph"
+  style="width: 100%; height: 100%; display: block"
+  [Highcharts]="Highcharts"
+  [callbackFunction]="chartCallback"
+  [options]="chartOptions"
+></highcharts-chart>

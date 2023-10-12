@@ -1,0 +1,61 @@
+ion-progress-bar {
+  --background: #fda57d;
+  --progress-background: #09c567;
+}
+ion-button {
+  text-transform: none;
+}
+.btn-outlines {
+  color: #000;
+  background-color: transparent;
+  font-size: 14px;
+  border-radius: 50px;
+  border: 1px solid #c4c4c4;
+  padding: 5px 25px;
+  margin-right: 10px;
+}
+
+.btn-black {
+  color: #fff;
+  background-color: #000;
+  font-size: 14px;
+  border-radius: 50px;
+  border: 1px solid #c4c4c4;
+  padding: 5px 25px;
+  margin-right: 10px;
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
+
+.s,
+.p {
+  font-size: 14px;
+}
+
+.g-outline {
+  background-color: transparent;
+  border: 1px solid #09c567;
+  color: #000;
+  font-size: 14px;
+  padding: 5px 30px;
+  margin-right: 5px;
+  border-radius: 50px;
+  margin-top: 8px;
+}
+.g-fill {
+  background-color: #09c567;
+  border: 1px solid #09c567;
+  color: #ffffff;
+  font-size: 14px;
+  padding: 5px 30px;
+  margin-left: 5px;
+  border-radius: 50px;
+  margin-top: 8px;
+}
+.checkhover {
+  :hover {
+    color: #1dcf5b !important;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+}

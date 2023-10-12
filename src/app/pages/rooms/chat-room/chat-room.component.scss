@@ -1,0 +1,36 @@
+// ion-content {
+//     --offset-bottom: 0px !important;
+//     --overflow: scroll;
+//     overflow: auto;
+//     &::-webkit-scrollbar {
+//       display: none;
+//     }
+//   }
+  .angular-editor-textarea{
+    border: none !important;
+  }
+  .angular-editor-toolbar {
+    background-color: transparent !important;
+    border: none !important;
+    margin-top: 70px !important;
+    position: fixed;
+    z-index: 99999;
+  }
+
+  .s-lbl{
+    position: relative;
+    padding-right: 10px;
+    padding-top: 10px;
+  }
+  
+  .s-lbl .fa-chevron-down{
+    position: absolute;
+    width: 10px;
+    top:24px;
+    right: 25px;
+    font-size: 13px;
+  }
+  .mainfeeddropdown{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  }

@@ -1,0 +1,254 @@
+<ion-content [fullscreen]="true">
+  <div class="container">
+    <div class="row border-bottom py-2">
+      <div class="col-12 px-0 pt-2 pb-3">
+        <quill-editor
+          trackChanges="all"
+          (onEditorCreated)="setFocus($event,editor)"
+          [(ngModel)]="htmlContent"
+          style="height: 90vh; width: 100%"
+          customToolbarPosition="top"
+        >
+          <div quill-editor-toolbar style="border: none; padding: 0">
+            <div style="border-bottom: 1px solid #d3d3d3; padding-bottom: 10px">
+              <span class="back-a">
+                <i
+                  routerLink="/"
+                  class="fas fa-arrow-left"
+                  style="font-size: 20px"
+                ></i> </span
+              >&nbsp;
+              <span class="ql-formats">
+                <button class="ql-bold"></button>
+                <button class="ql-italic"></button>
+                <button class="ql-underline"></button>
+              </span>
+              <!-- <span class="ql-formats">
+                  <select class="ql-header">
+                    <option value="1">Headline</option>
+                    <option selected value="2">Body</option>
+                    <option value="4">Caption</option>
+                  </select>
+                </span> -->
+              <span class="ql-formats">
+                <select
+                  class="ql-size"
+                  title="Size"
+                  (change)="setValue($event)"
+                >
+                  <option value="huge">Headline</option>
+                  <option value="large">Body</option>
+                  <option value="small">Caption</option>
+                  <!-- <option value="small">Caption</option> -->
+                </select>
+              </span>
+              <span class="ql-formats">
+                <button class="ql-image" [title]="'Image'"></button>
+              </span>
+              <span class="ql-formats">
+                <select class="ql-color"></select>
+              </span>
+              <span class="ql-formats">
+                <button class="ql-list" value="ordered"></button>
+              </span>
+              <span class="ql-formats">
+                <button class="ql-link"></button>
+              </span>
+
+              <ion-button
+                style="margin-top: -5px"
+                fill="clear"
+                (click)="presentPopover($event)"
+                color="success"
+              >
+                <ion-icon icon="calendar-number"></ion-icon>
+              </ion-button>
+              <ion-popover
+                [keepContentsMounted]="true"
+                #popover
+                [isOpen]="isOpen"
+                (didDismiss)="isOpen = false"
+                show-backdrop="false"
+                side="bottom"
+                alignment="center"
+              >
+                <ng-template>
+                  <ion-datetime
+                    [min]="minDate"
+                    [max]="maxDate"
+                    #popoverDatetime
+                    presentation="date-time"
+                    showDefaultButtons="true"
+                    locale="en-GB"
+                    hourCycle="h12"
+                    (ionChange)="formatDate(popoverDatetime.value)"
+                  ></ion-datetime>
+                </ng-template>
+              </ion-popover>
+              <!-- <ion-button
+              style="margin-top: -5px"
+              [ngStyle]="{'color': privacy=='public' ? '#1DCF5B' : '' }"
+              (click)="setOpenprivacy(false, 'public')"
+              [color]="privacy"
+              fill="clear"
+              shape="round"
+            >
+              Public
+            </ion-button> -->
+              <!-- <ion-button
+              (click)="setItem2()"
+              shape="round"
+              style="margin-top: -5px; margin-left: -5px"
+              color="success"
+              fill="outline"
+              >{{replaceString(post_genre)}}</ion-button
+            > -->
+
+              &nbsp;
+              <ion-button
+                class="save-btn-outline"
+                style="margin-top: -5px"
+                fill="outline"
+                color="dark"
+                shape="round"
+                (click)="onsubmit('draft')"
+                [disabled]="isFileUpload || isPosted"
+              >
+                <span class="save-btn">Save</span> </ion-button
+              >&nbsp;
+              <ion-button
+                style="margin-top: -5px"
+                fill="solid"
+                color="success"
+                shape="round"
+                (click)="onsubmit('live')"
+                [disabled]="isFileUpload || isPosted"
+              >
+                Post
+              </ion-button>
+            </div>
+            <ion-grid>
+              <ion-row>
+                <ion-col size="1.5">
+                  <ion-select
+                    (ionChange)="selectGeneral($event)"
+                    class="mainfeeddropdown"
+                    style="
+                      margin-top: 10px;
+                      margin-left: 10px;
+                      height: 40px;
+                      padding-left: 12px;
+                    "
+                    [(ngModel)]="post_genre"
+                    mode="ios"
+                    #mySelect2
+                    interface="popover"
+                  >
+                    <ion-select-option value="research"
+                      >research</ion-select-option
+                    >
+                    <ion-select-option value="news">news</ion-select-option>
+                    <ion-select-option value="general"
+                      >general</ion-select-option
+                    >
+                  </ion-select>
+                </ion-col>
+                <ion-col size="0.1"></ion-col>
+                <ion-col size="2" *ngIf="showOtherOptions">
+                  <ion-select
+                    class="mainfeeddropdown"
+                    style="
+                      margin-top: 10px;
+                      margin-left: 10px;
+                      height: 40px;
+                      padding-left: 12px;
+                    "
+                    [(ngModel)]="category"
+                    mode="ios"
+                    #mySelect3
+                    interface="popover"
+                  >
+                    <ion-select-option
+                      *ngFor="let item of cat"
+                      [value]="item.name"
+                      >{{item.name}}</ion-select-option
+                    >
+                  </ion-select>
+                </ion-col>
+                <ion-col size="0.1"></ion-col>
+                <ion-col size="2" *ngIf="showOtherOptions">
+                  <ion-select
+                    class="mainfeeddropdown"
+                    style="
+                      margin-top: 10px;
+                      margin-left: 10px;
+                      height: 40px;
+                      padding-left: 12px;
+                    "
+                    [(ngModel)]="sentiment"
+                    mode="ios"
+                    #mySelect3
+                    interface="popover"
+                  >
+                    <ion-select-option value="No sentiment"
+                      >No sentiment</ion-select-option
+                    >
+                    <ion-select-option value="Positive"
+                      >Positive</ion-select-option
+                    >
+                    <ion-select-option value="Negative"
+                      >Negative</ion-select-option
+                    >
+                    <ion-select-option value="Neutral"
+                      >Neutral</ion-select-option
+                    >
+                  </ion-select>
+                </ion-col>
+                <ion-col size="0.1"></ion-col>
+                <ion-col size="6" *ngIf="showOtherOptions">
+                  <label class="src-lbl">
+                    <input
+                      type="text"
+                      style="cursor: pointer; background: transparent"
+                      placeholder="Type tags..."
+                      [(ngModel)]="searchItem"
+                      class="src-inpt"
+                      (keyup.enter)="getEnterData($event)"
+                    />
+                  </label>
+                </ion-col>
+                <!-- <ion-col size="2">
+                  <ion-button
+                    fill="outline"
+                    shape="round"
+                    [color]="darktheme ? 'light' : 'dark'"
+                    style="cursor: pointer; margin-top: 10px"
+                    >Cover image
+                    <input
+                      type="file"
+                      id="myFileInput"
+                      (change)="uploadFile($event)"
+                    />
+                  </ion-button>
+                </ion-col> -->
+              </ion-row>
+              <ion-row>
+                <ion-col size="12">
+                  <span
+                    *ngFor="let item of dropdownList; let i=index"
+                    style="cursor: pointer; margin-left: 5px"
+                    class="out-tab"
+                    >{{item.item_text}}
+                    <strong (click)="removeItem(i)" class="cross2"
+                      >x</strong
+                    ></span
+                  >
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </div>
+        </quill-editor>
+      </div>
+    </div>
+  </div>
+</ion-content>
